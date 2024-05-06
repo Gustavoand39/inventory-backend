@@ -1,0 +1,17 @@
+import { DataTypes } from "sequelize";
+
+import connection from "../db/connection.js";
+
+const Movement = connection.define("Movement", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  movement: {
+    type: DataTypes.STRING(20),
+    allowNull: false,
+  },
+});
+
+export default Movement;
