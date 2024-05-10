@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 
 const validateToken = (req, res, next) => {
-  const authHeader = req.headers.auth;
+  const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
-      ok: false,
+      error: true,
       message: "Token no proporcionado o inválido",
     });
   }
@@ -14,6 +14,13 @@ const validateToken = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
+    if (!token) {
+      return res.status(401).json({
+        error: true,
+        message: "No tienes autorización",
+      });
+    }
+
     // Verificar el token con la clave secreta
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       algorithms: ["HS256"],
@@ -27,8 +34,8 @@ const validateToken = (req, res, next) => {
   } catch (error) {
     console.error("Error verificando token:", error);
     res.status(401).json({
-      ok: false,
-      message: "Token inválido o expirado",
+      error: true,
+      message: "Tu sesión ha expirado",
     });
   }
 };

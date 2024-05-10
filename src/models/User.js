@@ -13,11 +13,11 @@ const User = connection.define("User", {
     type: DataTypes.STRING(30),
     allowNull: false,
   },
-  lastName: {
+  last_name: {
     type: DataTypes.STRING(30),
     allowNull: false,
   },
-  userName: {
+  user_name: {
     type: DataTypes.STRING(30),
     allowNull: false,
   },

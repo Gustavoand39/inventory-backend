@@ -22,6 +22,20 @@ class Server {
 
   // Método para definir los middlewares
   middlewares() {
+    this.app.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+      res.header(
+        "Access-Control-Allow-Headers",
+        "Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept"
+      );
+      res.header(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, PATCH"
+      );
+      res.header("Access-Control-Allow-Credentials", "true");
+      res.header("Content-Type", "application/json");
+      next();
+    });
     this.app.use(express.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
   }

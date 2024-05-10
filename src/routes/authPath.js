@@ -1,12 +1,15 @@
 import { Router } from "express";
 
-import { login } from "../controllers/auth.js";
+import { login, refreshToken } from "../controllers/auth.js";
 
 const router = Router();
 
 //? Api path: /auth/
 
 // Login
-router.get("/login", login);
+router.post("/login", login);
+
+// Refrescar token
+router.post("/refresh", refreshToken);
 
 export default router;

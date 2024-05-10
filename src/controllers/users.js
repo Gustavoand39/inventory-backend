@@ -51,7 +51,7 @@ export const createUser = async (req, res) => {
   try {
     const [existingEmail, existingUserName] = await Promise.all([
       User.findOne({ where: { email } }),
-      User.findOne({ where: { userName } }),
+      User.findOne({ where: { user_name: userName } }),
     ]);
 
     if (existingEmail)
@@ -73,14 +73,14 @@ export const createUser = async (req, res) => {
     // Crear el usuario con la contraseña encriptada
     const user = await User.create({
       name,
-      lastName,
-      userName,
+      last_name: lastName,
+      user_name: userName,
       email,
       password: hashedPassword,
       roleId,
     });
 
-    res.json({
+    res.status(201).json({
       ok: true,
       message: "Usuario creado exitosamente",
       user: {
