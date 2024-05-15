@@ -8,7 +8,7 @@ const Movement = connection.define("Movement", {
     primaryKey: true,
     autoIncrement: true,
   },
-  movement: {
+  name: {
     type: DataTypes.STRING(20),
     allowNull: false,
   },

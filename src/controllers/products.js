@@ -45,16 +45,16 @@ export const getProductById = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-  const { name, price, description, stock, minStock, image } = req.body;
+  const { name, description, stock, minStock, image, categoryId } = req.body;
 
   try {
     const product = await Product.create({
       name,
-      price,
       description,
       stock,
       minStock,
       image,
+      categoryId,
     });
 
     res.json({

@@ -7,13 +7,14 @@ export const getUsers = async (req, res) => {
     const users = await User.findAll();
 
     res.json({
-      ok: true,
+      error: false,
+      message: "Usuarios obtenidos",
       users,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -27,19 +28,20 @@ export const getUserById = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Usuario no encontrado",
       });
     }
 
     res.json({
-      ok: true,
+      error: false,
+      message: "Usuario obtenido",
       user,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -56,13 +58,13 @@ export const createUser = async (req, res) => {
 
     if (existingEmail)
       return res.status(400).json({
-        ok: false,
+        error: true,
         message: "El email ya está registrado",
       });
 
     if (existingUserName)
       return res.status(400).json({
-        ok: false,
+        error: true,
         message: "El nombre de usuario ya está registrado",
       });
 
@@ -81,20 +83,17 @@ export const createUser = async (req, res) => {
     });
 
     res.status(201).json({
-      ok: true,
+      error: false,
       message: "Usuario creado exitosamente",
       user: {
         id: user.id,
-        name: user.name,
         userName: user.userName,
-        email: user.email,
-        roleId: user.roleId,
       },
     });
   } catch (error) {
     console.error("Error creando usuario:", error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -109,7 +108,7 @@ export const updateUser = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Usuario no encontrado",
       });
     }
@@ -123,14 +122,14 @@ export const updateUser = async (req, res) => {
     });
 
     res.json({
-      ok: true,
+      error: false,
       message: "Usuario actualizado",
       user,
     });
   } catch (error) {
     console.error("Error actualizando usuario:", error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -144,7 +143,7 @@ export const deleteUser = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Usuario no encontrado",
       });
     }
@@ -152,13 +151,13 @@ export const deleteUser = async (req, res) => {
     await user.destroy();
 
     res.json({
-      ok: true,
+      error: false,
       message: "Usuario eliminado",
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }

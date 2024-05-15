@@ -8,7 +8,7 @@ const Role = connection.define("Role", {
     primaryKey: true,
     autoIncrement: true,
   },
-  role: {
+  name: {
     type: DataTypes.STRING(30),
     allowNull: false,
   },

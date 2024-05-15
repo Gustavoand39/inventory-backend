@@ -33,7 +33,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { userId: user.id, username: user.user_name }, // Datos que se guardarán en el token
       JWT_SECRET, // Clave secreta
-      { expiresIn: "5s" }
+      { expiresIn: "1h" }
     );
 
     // Retornar el token y datos básicos del usuario
@@ -41,7 +41,7 @@ export const login = async (req, res) => {
       error: false,
       message: "Inicio de sesión correcto",
       token,
-      user: {
+      data: {
         id: user.id,
         username: user.user_name,
       },
@@ -91,7 +91,7 @@ export const refreshToken = async (req, res) => {
     res.json({
       error: false,
       message: "Token de refresco válido",
-      user: {
+      data: {
         id: user.id,
         username: user.user_name,
       },

@@ -4,8 +4,12 @@ import bodyParser from "body-parser";
 
 import authPath from "../routes/authPath.js";
 import usersPath from "../routes/usersPath.js";
+import rolesPath from "../routes/rolesPath.js";
 import productsPath from "../routes/productsPath.js";
+import categoriesPath from "../routes/categoriesPath.js";
 import inventoryPath from "../routes/inventoryPath.js";
+import movementsPath from "../routes/movementsPath.js";
+import uploadFilePath from "../routes/uploadFilePath.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -37,6 +41,7 @@ class Server {
       next();
     });
     this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
     this.app.use(bodyParser.urlencoded({ extended: true }));
   }
 
@@ -44,8 +49,12 @@ class Server {
   routes() {
     this.app.use("/auth", authPath);
     this.app.use("/users", usersPath);
+    this.app.use("/roles", rolesPath);
     this.app.use("/products", productsPath);
+    this.app.use("/categories", categoriesPath);
     this.app.use("/inventory", inventoryPath);
+    this.app.use("/movements", movementsPath);
+    this.app.use("/upload", uploadFilePath);
   }
 
   // Método para iniciar el servidor
