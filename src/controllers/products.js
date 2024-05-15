@@ -5,13 +5,13 @@ export const getProducts = async (req, res) => {
     const products = await Product.findAll();
 
     res.json({
-      ok: true,
+      error: false,
       products,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -25,20 +25,20 @@ export const getProductById = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
 
     res.json({
-      ok: true,
+      error: false,
       message: "Producto encontrado",
       product,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -58,14 +58,14 @@ export const createProduct = async (req, res) => {
     });
 
     res.json({
-      ok: true,
+      error: false,
       message: "Producto creado exitosamente",
       product,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -80,7 +80,7 @@ export const updateProduct = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
@@ -95,14 +95,14 @@ export const updateProduct = async (req, res) => {
     });
 
     res.json({
-      ok: true,
+      error: false,
       message: "Producto actualizado exitosamente",
       product,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -116,7 +116,7 @@ export const deleteProduct = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
@@ -124,13 +124,13 @@ export const deleteProduct = async (req, res) => {
     await product.destroy();
 
     res.json({
-      ok: true,
+      error: false,
       message: "Producto eliminado",
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -145,7 +145,7 @@ export const updateStock = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
@@ -157,14 +157,14 @@ export const updateStock = async (req, res) => {
     });
 
     res.json({
-      ok: true,
+      error: false,
       message: "Stock actualizado exitosamente",
       product,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -179,7 +179,7 @@ export const updateMinStock = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
@@ -189,14 +189,38 @@ export const updateMinStock = async (req, res) => {
     });
 
     res.json({
-      ok: true,
+      error: false,
       message: "Stock mínimo actualizado exitosamente",
       product,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+// Obtener los productos que están por debajo del stock mínimo
+export const getProductsLowStock = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      where: {
+        stock: {
+          [Op.lte]: sequelize.col("minStock"),
+        },
+      },
+    });
+
+    res.json({
+      error: false,
+      products,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
       message: "Error interno del servidor",
     });
   }
@@ -211,7 +235,7 @@ export const updateImage = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
@@ -221,14 +245,14 @@ export const updateImage = async (req, res) => {
     });
 
     res.json({
-      ok: true,
+      error: false,
       message: "Imagen actualizada exitosamente",
       product,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }

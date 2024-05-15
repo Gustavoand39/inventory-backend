@@ -6,11 +6,14 @@ export const getInventory = async (req, res) => {
 
     res.status(200).json({
       ok: true,
-      inventory,
+      data: inventory,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, message: "Error interno del servidor" });
+    console.error("Error al obtener los inventarios", error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor",
+    });
   }
 };
 
@@ -22,18 +25,21 @@ export const getInventoryById = async (req, res) => {
 
     if (!inventory) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Inventario no encontrado",
       });
     }
 
     res.status(200).json({
-      ok: true,
-      inventory,
+      error: false,
+      data: inventory,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, message: "Error interno del servidor" });
+    console.error("Error al obtener el inventario", error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor",
+    });
   }
 };
 
@@ -49,7 +55,7 @@ export const createInventory = async (req, res) => {
     });
 
     res.status(201).json({
-      ok: true,
+      error: true,
       inventory,
     });
   } catch (error) {

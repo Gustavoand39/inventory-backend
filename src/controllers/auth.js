@@ -41,7 +41,7 @@ export const login = async (req, res) => {
       error: false,
       message: "Inicio de sesión correcto",
       token,
-      data: {
+      user: {
         id: user.id,
         username: user.user_name,
       },
@@ -91,7 +91,7 @@ export const refreshToken = async (req, res) => {
     res.json({
       error: false,
       message: "Token de refresco válido",
-      data: {
+      user: {
         id: user.id,
         username: user.user_name,
       },

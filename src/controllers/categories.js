@@ -9,7 +9,7 @@ export const getCategories = async (req, res) => {
       data: categories,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener las categorías", error);
     res.status(500).json({
       error: true,
       message: "Error interno del servidor",
@@ -36,7 +36,7 @@ export const getCategoryById = async (req, res) => {
       data: category,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener la categoría", error);
     res.status(500).json({
       error: true,
       message: "Error interno del servidor",
@@ -56,7 +56,7 @@ export const createCategory = async (req, res) => {
       data: category,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al crear la categoría", error);
     res.status(500).json({
       error: true,
       message: "Error interno del servidor",
@@ -86,7 +86,7 @@ export const updateCategory = async (req, res) => {
       data: category,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al actualizar la categoría", error);
     res.status(500).json({
       error: true,
       message: "Error interno del servidor",
@@ -114,7 +114,7 @@ export const deleteCategory = async (req, res) => {
       message: "Categoría eliminada",
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al eliminar la categoría", error);
     res.status(500).json({
       error: true,
       message: "Error interno del servidor",

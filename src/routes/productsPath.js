@@ -8,6 +8,7 @@ import {
   deleteProduct,
   updateStock,
   updateMinStock,
+  getProductsLowStock,
   updateImage,
 } from "../controllers/products.js";
 import validateToken from "../middlewares/validateToken.js";
@@ -36,6 +37,9 @@ router.patch("/:id/stock", validateToken, updateStock);
 
 // Actualizar el stock mínimo de un producto
 router.patch("/:id/minStock", validateToken, updateMinStock);
+
+// Obtener los productos que están por debajo del stock mínimo
+router.get("/low-stock", validateToken, getProductsLowStock);
 
 // Actualizar la imagen de un producto
 router.patch("/:id/image", validateToken, updateImage);
