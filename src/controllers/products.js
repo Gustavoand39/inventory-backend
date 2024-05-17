@@ -1,8 +1,18 @@
+import { Op, DataTypes } from "sequelize";
+import sequelize from "../db/connection.js";
 import Product from "../models/Product.js";
 
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.findAll();
+    const products = await sequelize.query(
+      `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
+      FROM Products p
+      LEFT JOIN Categories c
+      ON p.category_id = c.id`,
+      {
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.json({
       error: false,
@@ -26,7 +36,7 @@ export const getProductById = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado",
+        message: "Producto no encontrado 1",
       });
     }
 
@@ -45,7 +55,9 @@ export const getProductById = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-  const { name, description, stock, minStock, image, categoryId } = req.body;
+  const { name, description, stock, minStock, image, category } = req.body;
+
+  console.log("-------->", req.body);
 
   try {
     const product = await Product.create({
@@ -54,7 +66,7 @@ export const createProduct = async (req, res) => {
       stock,
       minStock,
       image,
-      categoryId,
+      categoryId: category,
     });
 
     res.json({
@@ -81,7 +93,7 @@ export const updateProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado",
+        message: "Producto no encontrado 2",
       });
     }
 
@@ -117,7 +129,7 @@ export const deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado",
+        message: "Producto no encontrado 3",
       });
     }
 
@@ -146,7 +158,7 @@ export const updateStock = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado",
+        message: "Producto no encontrado 4",
       });
     }
 
@@ -180,7 +192,7 @@ export const updateMinStock = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado",
+        message: "Producto no encontrado 5",
       });
     }
 
@@ -208,10 +220,12 @@ export const getProductsLowStock = async (req, res) => {
     const products = await Product.findAll({
       where: {
         stock: {
-          [Op.lte]: sequelize.col("minStock"),
+          [Op.lt]: sequelize.col("min_stock"),
         },
       },
     });
+
+    console.log("-->", products);
 
     res.json({
       error: false,
@@ -236,7 +250,7 @@ export const updateImage = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado",
+        message: "Producto no encontrado 6",
       });
     }
 

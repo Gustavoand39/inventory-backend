@@ -17,6 +17,9 @@ const router = Router();
 
 //? Api path: /products/
 
+// Obtener los productos que están por debajo del stock mínimo
+router.get("/low", validateToken, getProductsLowStock);
+
 // Obtener todos los productos
 router.get("/", validateToken, getProducts);
 
@@ -37,9 +40,6 @@ router.patch("/:id/stock", validateToken, updateStock);
 
 // Actualizar el stock mínimo de un producto
 router.patch("/:id/minStock", validateToken, updateMinStock);
-
-// Obtener los productos que están por debajo del stock mínimo
-router.get("/low-stock", validateToken, getProductsLowStock);
 
 // Actualizar la imagen de un producto
 router.patch("/:id/image", validateToken, updateImage);
