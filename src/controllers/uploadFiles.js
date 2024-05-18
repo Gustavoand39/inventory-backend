@@ -1,7 +1,11 @@
-const filePath = "images";
+import fs from "fs";
+import sharp from "sharp";
+
+const imagePath = "images";
 
 export const uploadImage = async (req, res) => {
   try {
+    const { folder = "uploads" } = req.body;
     const file = req.files.file;
     const fileName = file.name;
 
@@ -13,22 +17,22 @@ export const uploadImage = async (req, res) => {
     }
 
     // Crear el directorio de imágenes si no existe
-    if (!fs.existsSync("./images")) fs.mkdirSync("./images");
+    if (!fs.existsSync(`./${imagePath}`)) fs.mkdirSync(`./${imagePath}`);
+
+    // Crear el directorio de la carpeta si no existe
+    if (!fs.existsSync(`./${imagePath}/${folder}`))
+      fs.mkdirSync(`./${imagePath}/${folder}`);
 
     // Redimensionar la imagen a 200x200 y convertirla a JPEG
-    const image = await sharp(file.data)
-      .resize(200, 200)
-      .toFormat("jpeg")
-      .jpeg({ quality: 90 })
-      .toBuffer();
+    const image = await sharp(file.data).resize(200, 200).toBuffer();
 
     // Guardar el buffer de la imagen en un archivo
-    fs.writeFileSync(`.${filePath}/${fileName}`, image);
+    fs.writeFileSync(`./${imagePath}/${folder}/${fileName}`, image);
 
     return res.status(200).json({
       error: false,
       message: "Archivo subido correctamente",
-      data: `${filePath}/${fileName}`,
+      data: `${imagePath}/${folder}/${fileName}`,
     });
   } catch (error) {
     console.error(error);

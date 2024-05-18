@@ -1,4 +1,6 @@
-import { Op, DataTypes } from "sequelize";
+import fs from "fs";
+import { Op } from "sequelize";
+
 import sequelize from "../db/connection.js";
 import Product from "../models/Product.js";
 
@@ -36,7 +38,7 @@ export const getProductById = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado 1",
+        message: "Producto no encontrado",
       });
     }
 
@@ -56,8 +58,6 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   const { name, description, stock, minStock, image, category } = req.body;
-
-  console.log("-------->", req.body);
 
   try {
     const product = await Product.create({
@@ -93,7 +93,7 @@ export const updateProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado 2",
+        message: "Producto no encontrado",
       });
     }
 
@@ -129,9 +129,11 @@ export const deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado 3",
+        message: "Producto no encontrado",
       });
     }
+
+    if (product.image) fs.unlinkSync(product.image);
 
     await product.destroy();
 
@@ -158,7 +160,7 @@ export const updateStock = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado 4",
+        message: "Producto no encontrado",
       });
     }
 
@@ -192,7 +194,7 @@ export const updateMinStock = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado 5",
+        message: "Producto no encontrado",
       });
     }
 
@@ -250,7 +252,7 @@ export const updateImage = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         error: true,
-        message: "Producto no encontrado 6",
+        message: "Producto no encontrado",
       });
     }
 

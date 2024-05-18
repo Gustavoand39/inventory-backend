@@ -7,6 +7,6 @@ const router = Router();
 //? Api path: /upload/
 
 // Subir una imagen
-router.post("/", validateToken, uploadImage);
+router.post("/image/", validateToken, uploadImage);
 
 export default router;

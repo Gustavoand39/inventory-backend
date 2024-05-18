@@ -1,6 +1,7 @@
 import express from "express";
 import http from "http";
 import bodyParser from "body-parser";
+import fileUpload from "express-fileupload";
 
 import authPath from "../routes/authPath.js";
 import usersPath from "../routes/usersPath.js";
@@ -40,9 +41,12 @@ class Server {
       res.header("Content-Type", "application/json");
       next();
     });
+
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(bodyParser.urlencoded({ extended: true }));
+
+    this.app.use(fileUpload());
   }
 
   // Método para definir las rutas
