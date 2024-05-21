@@ -1,6 +1,6 @@
-import { DataTypes } from "sequelize";
+const { DataTypes } = require("sequelize");
 
-import connection from "../db/connection.js";
+const connection = require("../db/connection.js");
 
 const Role = connection.define("Role", {
   id: {
@@ -14,4 +14,4 @@ const Role = connection.define("Role", {
   },
 });
 
-export default Role;
+module.exports = Role;

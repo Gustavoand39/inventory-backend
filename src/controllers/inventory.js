@@ -1,6 +1,6 @@
-import Inventory from "../models/inventory.js";
+const Inventory = require("../models/inventory.js");
 
-export const getInventory = async (req, res) => {
+const getInventory = async (req, res) => {
   try {
     const inventory = await Inventory.findAll();
 
@@ -17,7 +17,7 @@ export const getInventory = async (req, res) => {
   }
 };
 
-export const getInventoryById = async (req, res) => {
+const getInventoryById = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -43,7 +43,7 @@ export const getInventoryById = async (req, res) => {
   }
 };
 
-export const createInventory = async (req, res) => {
+const createInventory = async (req, res) => {
   const { movementId, productId, userId, details } = req.body;
 
   try {
@@ -64,7 +64,7 @@ export const createInventory = async (req, res) => {
   }
 };
 
-export const updateInventory = async (req, res) => {
+const updateInventory = async (req, res) => {
   const { id } = req.params;
   const { movementId, productId, userId, details } = req.body;
 
@@ -95,7 +95,7 @@ export const updateInventory = async (req, res) => {
   }
 };
 
-export const deleteInventory = async (req, res) => {
+const deleteInventory = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -118,4 +118,12 @@ export const deleteInventory = async (req, res) => {
     console.error(error);
     res.status(500).json({ ok: false, message: "Error interno del servidor" });
   }
+};
+
+module.exports = {
+  getInventory,
+  getInventoryById,
+  createInventory,
+  updateInventory,
+  deleteInventory,
 };

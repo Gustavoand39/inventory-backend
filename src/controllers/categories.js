@@ -1,6 +1,6 @@
-import Category from "../models/Category.js";
+const Category = require("../models/Category.js");
 
-export const getCategories = async (req, res) => {
+const getCategories = async (req, res) => {
   try {
     const categories = await Category.findAll();
     res.status(200).json({
@@ -17,7 +17,7 @@ export const getCategories = async (req, res) => {
   }
 };
 
-export const getCategoryById = async (req, res) => {
+const getCategoryById = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -44,7 +44,7 @@ export const getCategoryById = async (req, res) => {
   }
 };
 
-export const createCategory = async (req, res) => {
+const createCategory = async (req, res) => {
   const { name } = req.body;
 
   try {
@@ -64,7 +64,7 @@ export const createCategory = async (req, res) => {
   }
 };
 
-export const updateCategory = async (req, res) => {
+const updateCategory = async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
@@ -94,7 +94,7 @@ export const updateCategory = async (req, res) => {
   }
 };
 
-export const deleteCategory = async (req, res) => {
+const deleteCategory = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -120,4 +120,12 @@ export const deleteCategory = async (req, res) => {
       message: "Error interno del servidor",
     });
   }
+};
+
+module.exports = {
+  getCategories,
+  getCategoryById,
+  createCategory,
+  updateCategory,
+  deleteCategory,
 };

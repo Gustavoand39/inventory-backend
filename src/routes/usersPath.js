@@ -1,14 +1,14 @@
-import { Router } from "express";
+const { Router } = require("express");
 
-import {
+const {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
-} from "../controllers/users.js";
+} = require("../controllers/users.js");
 
-import validateToken from "../middlewares/validateToken.js";
+const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
 
@@ -29,4 +29,4 @@ router.put("/:id", validateToken, updateUser);
 // Eliminar un usuario
 router.delete("/:id", validateToken, deleteUser);
 
-export default router;
+module.exports = router;

@@ -1,6 +1,6 @@
-import Role from "../models/Role.js";
+const Role = require("../models/Role.js");
 
-export const getRoles = async (req, res) => {
+const getRoles = async (req, res) => {
   try {
     const roles = await Role.findAll();
     res.status(200).json({
@@ -16,7 +16,7 @@ export const getRoles = async (req, res) => {
   }
 };
 
-export const getRoleById = async (req, res) => {
+const getRoleById = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -42,7 +42,7 @@ export const getRoleById = async (req, res) => {
   }
 };
 
-export const createRole = async (req, res) => {
+const createRole = async (req, res) => {
   const { name } = req.body;
 
   try {
@@ -61,7 +61,7 @@ export const createRole = async (req, res) => {
   }
 };
 
-export const updateRole = async (req, res) => {
+const updateRole = async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
@@ -90,7 +90,7 @@ export const updateRole = async (req, res) => {
   }
 };
 
-export const deleteRole = async (req, res) => {
+const deleteRole = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -115,4 +115,12 @@ export const deleteRole = async (req, res) => {
       message: "Error interno del servidor",
     });
   }
+};
+
+module.exports = {
+  getRoles,
+  getRoleById,
+  createRole,
+  updateRole,
+  deleteRole,
 };

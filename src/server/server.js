@@ -1,16 +1,16 @@
-import express from "express";
-import http from "http";
-import bodyParser from "body-parser";
-import fileUpload from "express-fileupload";
+const express = require("express");
+const http = require("http");
+const bodyParser = require("body-parser");
+const fileUpload = require("express-fileupload");
 
-import authPath from "../routes/authPath.js";
-import usersPath from "../routes/usersPath.js";
-import rolesPath from "../routes/rolesPath.js";
-import productsPath from "../routes/productsPath.js";
-import categoriesPath from "../routes/categoriesPath.js";
-import inventoryPath from "../routes/inventoryPath.js";
-import movementsPath from "../routes/movementsPath.js";
-import uploadFilePath from "../routes/uploadFilePath.js";
+const authPath = require("../routes/authPath.js");
+const usersPath = require("../routes/usersPath.js");
+const rolesPath = require("../routes/rolesPath.js");
+const productsPath = require("../routes/productsPath.js");
+const categoriesPath = require("../routes/categoriesPath.js");
+const inventoryPath = require("../routes/inventoryPath.js");
+const movementsPath = require("../routes/movementsPath.js");
+const uploadFilePath = require("../routes/uploadFilePath.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -69,4 +69,4 @@ class Server {
   }
 }
 
-export default Server;
+module.exports = Server;

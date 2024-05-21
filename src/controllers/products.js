@@ -1,10 +1,10 @@
-import fs from "fs";
-import { Op } from "sequelize";
+const fs = require("fs");
+const { Op } = require("sequelize");
 
-import sequelize from "../db/connection.js";
-import Product from "../models/Product.js";
+const sequelize = require("../db/connection.js");
+const Product = require("../models/Product.js");
 
-export const getProducts = async (req, res) => {
+const getProducts = async (req, res) => {
   try {
     const products = await sequelize.query(
       `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
@@ -30,7 +30,7 @@ export const getProducts = async (req, res) => {
   }
 };
 
-export const getProductById = async (req, res) => {
+const getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -67,7 +67,7 @@ export const getProductById = async (req, res) => {
   }
 };
 
-export const createProduct = async (req, res) => {
+const createProduct = async (req, res) => {
   const { name, description, stock, minStock, image, category } = req.body;
 
   try {
@@ -94,7 +94,7 @@ export const createProduct = async (req, res) => {
   }
 };
 
-export const updateProduct = async (req, res) => {
+const updateProduct = async (req, res) => {
   const { id } = req.params;
   const { name, price, description, stock, minStock, image } = req.body;
 
@@ -131,7 +131,7 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-export const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -161,7 +161,7 @@ export const deleteProduct = async (req, res) => {
   }
 };
 
-export const updateStock = async (req, res) => {
+const updateStock = async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
 
@@ -195,7 +195,7 @@ export const updateStock = async (req, res) => {
   }
 };
 
-export const updateMinStock = async (req, res) => {
+const updateMinStock = async (req, res) => {
   const { id } = req.params;
   const { minStock } = req.body;
 
@@ -228,7 +228,7 @@ export const updateMinStock = async (req, res) => {
 };
 
 // Obtener los productos que están por debajo del stock mínimo
-export const getProductsLowStock = async (req, res) => {
+const getProductsLowStock = async (req, res) => {
   try {
     const products = await Product.findAll({
       where: {
@@ -253,7 +253,7 @@ export const getProductsLowStock = async (req, res) => {
   }
 };
 
-export const updateImage = async (req, res) => {
+const updateImage = async (req, res) => {
   const { id } = req.params;
   const { image } = req.body;
 
@@ -283,4 +283,16 @@ export const updateImage = async (req, res) => {
       message: "Error interno del servidor",
     });
   }
+};
+
+module.exports = {
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  updateStock,
+  updateMinStock,
+  getProductsLowStock,
+  updateImage,
 };

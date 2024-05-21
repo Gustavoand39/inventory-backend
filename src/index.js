@@ -1,8 +1,8 @@
 // Archivo principal de la aplicación
-import Server from "./server/server.js";
+const Server = require("./server/server.js");
 
 // Variables de entorno
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 dotenv.config();
 
 // Instancia de la clase Server

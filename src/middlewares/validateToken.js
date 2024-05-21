@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
 const validateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -40,4 +40,4 @@ const validateToken = (req, res, next) => {
   }
 };
 
-export default validateToken;
+module.exports = validateToken;

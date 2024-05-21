@@ -1,6 +1,6 @@
-import Movement from "../models/Movement.js";
+const Movement = require("../models/Movement.js");
 
-export const getMovements = async (req, res) => {
+const getMovements = async (req, res) => {
   try {
     const movements = await Movement.findAll();
     res.status(200).json({
@@ -17,7 +17,7 @@ export const getMovements = async (req, res) => {
   }
 };
 
-export const getMovementById = async (req, res) => {
+const getMovementById = async (req, res) => {
   const { id } = req.params;
   try {
     const movement = await Movement.findByPk(id);
@@ -43,7 +43,7 @@ export const getMovementById = async (req, res) => {
   }
 };
 
-export const createMovement = async (req, res) => {
+const createMovement = async (req, res) => {
   const { name } = req.body;
 
   try {
@@ -65,7 +65,7 @@ export const createMovement = async (req, res) => {
   }
 };
 
-export const updateMovement = async (req, res) => {
+const updateMovement = async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
@@ -97,7 +97,7 @@ export const updateMovement = async (req, res) => {
   }
 };
 
-export const deleteMovement = async (req, res) => {
+const deleteMovement = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -122,4 +122,12 @@ export const deleteMovement = async (req, res) => {
       message: "Error interno del servidor",
     });
   }
+};
+
+module.exports = {
+  getMovements,
+  getMovementById,
+  createMovement,
+  updateMovement,
+  deleteMovement,
 };

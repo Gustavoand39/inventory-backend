@@ -1,13 +1,13 @@
-import { Router } from "express";
+const { Router } = require("express");
 
-import {
+const {
   getInventory,
   getInventoryById,
   createInventory,
   updateInventory,
   deleteInventory,
-} from "../controllers/inventory.js";
-import validateToken from "../middlewares/validateToken.js";
+} = require("../controllers/inventory.js");
+const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
 
@@ -28,4 +28,4 @@ router.put("/:id", validateToken, updateInventory);
 // Eliminar un inventario
 router.delete("/:id", validateToken, deleteInventory);
 
-export default router;
+module.exports = router;

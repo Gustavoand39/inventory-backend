@@ -1,9 +1,9 @@
-import { DataTypes } from "sequelize";
+const { DataTypes } = require("sequelize");
 
-import connection from "../db/connection.js";
-import Movement from "./Movement.js";
-import Product from "./Product.js";
-import User from "./User.js";
+const connection = require("../db/connection.js");
+const Movement = require("./Movement.js");
+const Product = require("./Product.js");
+const User = require("./User.js");
 
 const Inventory = connection.define(
   "Inventory",
@@ -57,4 +57,4 @@ Product.hasMany(Inventory, { foreignKey: "productId" });
 Inventory.belongsTo(User, { foreignKey: "userId" });
 User.hasMany(Inventory, { foreignKey: "userId" });
 
-export default Inventory;
+module.exports = Inventory;

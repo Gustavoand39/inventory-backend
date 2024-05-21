@@ -1,8 +1,8 @@
-import bcrypt from "bcrypt";
+const bcrypt = require("bcrypt");
 
-import User from "../models/User.js";
+const User = require("../models/User.js");
 
-export const getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
     const users = await User.findAll();
 
@@ -20,7 +20,7 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -47,7 +47,7 @@ export const getUserById = async (req, res) => {
   }
 };
 
-export const createUser = async (req, res) => {
+const createUser = async (req, res) => {
   const { name, lastName, userName, email, password, roleId } = req.body;
 
   try {
@@ -99,7 +99,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-export const updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, lastName, userName, email, password } = req.body;
 
@@ -135,7 +135,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -161,4 +161,12 @@ export const deleteUser = async (req, res) => {
       message: "Error interno del servidor",
     });
   }
+};
+
+module.exports = {
+  getUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
 };

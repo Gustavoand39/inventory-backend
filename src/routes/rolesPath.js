@@ -1,12 +1,12 @@
-import { Router } from "express";
-import {
+const { Router } = require("express");
+const {
   getRoles,
   getRoleById,
   createRole,
   updateRole,
   deleteRole,
-} from "../controllers/roles.js";
-import validateToken from "../middlewares/validateToken.js";
+} = require("../controllers/roles.js");
+const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
 
@@ -27,4 +27,4 @@ router.put("/:id", validateToken, updateRole);
 // Eliminar un rol
 router.delete("/:id", validateToken, deleteRole);
 
-export default router;
+module.exports = router;

@@ -1,11 +1,11 @@
-import { Router } from "express";
-import {
+const { Router } = require("express");
+const {
   getMovements,
   getMovementById,
   createMovement,
   updateMovement,
   deleteMovement,
-} from "../controllers/movements.js";
+} = require("../controllers/movements.js");
 
 const router = Router();
 
@@ -26,4 +26,4 @@ router.put("/:id", updateMovement);
 // Eliminar una categoría
 router.delete("/:id", deleteMovement);
 
-export default router;
+module.exports = router;

@@ -1,11 +1,11 @@
-import { Router } from "express";
-import {
+const { Router } = require("express");
+const {
   getCategories,
   getCategoryById,
   createCategory,
   updateCategory,
   deleteCategory,
-} from "../controllers/categories.js";
+} = require("../controllers/categories.js");
 
 const router = Router();
 
@@ -26,4 +26,4 @@ router.put("/:id", updateCategory);
 // Eliminar una categoría
 router.delete("/:id", deleteCategory);
 
-export default router;
+module.exports = router;

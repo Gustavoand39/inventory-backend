@@ -1,6 +1,6 @@
-import { DataTypes } from "sequelize";
+const { DataTypes } = require("sequelize");
 
-import connection from "../db/connection.js";
+const connection = require("../db/connection.js");
 
 const Movement = connection.define("Movement", {
   id: {
@@ -14,4 +14,4 @@ const Movement = connection.define("Movement", {
   },
 });
 
-export default Movement;
+module.exports = Movement;

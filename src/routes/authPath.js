@@ -1,6 +1,6 @@
-import { Router } from "express";
+const { Router } = require("express");
 
-import { login, refreshToken } from "../controllers/auth.js";
+const { login, refreshToken } = require("../controllers/auth.js");
 
 const router = Router();
 
@@ -12,4 +12,4 @@ router.post("/login", login);
 // Refrescar token
 router.post("/refresh", refreshToken);
 
-export default router;
+module.exports = router;

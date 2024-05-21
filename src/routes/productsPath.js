@@ -1,6 +1,6 @@
-import { Router } from "express";
+const { Router } = require("express");
 
-import {
+const {
   getProducts,
   getProductById,
   createProduct,
@@ -10,8 +10,8 @@ import {
   updateMinStock,
   getProductsLowStock,
   updateImage,
-} from "../controllers/products.js";
-import validateToken from "../middlewares/validateToken.js";
+} = require("../controllers/products.js");
+const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
 
@@ -44,4 +44,4 @@ router.patch("/:id/minStock", validateToken, updateMinStock);
 // Actualizar la imagen de un producto
 router.patch("/:id/image", validateToken, updateImage);
 
-export default router;
+module.exports = router;

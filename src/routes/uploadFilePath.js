@@ -1,6 +1,6 @@
-import { Router } from "express";
-import { uploadImage } from "../controllers/uploadFiles.js";
-import validateToken from "../middlewares/validateToken.js";
+const { Router } = require("express");
+const { uploadImage } = require("../controllers/uploadFiles.js");
+const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
 
@@ -9,4 +9,4 @@ const router = Router();
 // Subir una imagen
 router.post("/image/", validateToken, uploadImage);
 
-export default router;
+module.exports = router;

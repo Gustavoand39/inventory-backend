@@ -1,11 +1,11 @@
-import jwt from "jsonwebtoken"; // Se usa para generar el token
-import bcrypt from "bcrypt"; // Se usa para comparar contraseñas
+const jwt = require("jsonwebtoken"); // Se usa para generar el token
+const bcrypt = require("bcrypt"); // Se usa para comparar contraseñas
 
-import User from "../models/User.js";
+const User = require("../models/User.js");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
@@ -55,7 +55,7 @@ export const login = async (req, res) => {
   }
 };
 
-export const refreshToken = async (req, res) => {
+const refreshToken = async (req, res) => {
   const { token } = req.body;
 
   try {
@@ -104,4 +104,9 @@ export const refreshToken = async (req, res) => {
       message: "Tu sesión ha expirado",
     });
   }
+};
+
+module.exports = {
+  login,
+  refreshToken,
 };

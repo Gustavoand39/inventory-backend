@@ -1,9 +1,9 @@
-import fs from "fs";
-import sharp from "sharp";
+const fs = require("fs");
+const sharp = require("sharp");
 
 const imagePath = "images";
 
-export const uploadImage = async (req, res) => {
+const uploadImage = async (req, res) => {
   try {
     const { folder = "uploads" } = req.body;
     const file = req.files.image;
@@ -41,3 +41,5 @@ export const uploadImage = async (req, res) => {
       .json({ error: true, message: "Error interno del servidor" });
   }
 };
+
+module.exports = { uploadImage };
