@@ -144,7 +144,7 @@ const deleteProduct = async (req, res) => {
       });
     }
 
-    if (product.image) fs.unlinkSync(product.image);
+    if (product.image) fs.unlinkSync(`public/${product.image}`);
 
     await product.destroy();
 
