@@ -18,6 +18,7 @@ export const getProducts = async (req, res) => {
 
     res.json({
       error: false,
+      message: "Productos obtenidos",
       products,
     });
   } catch (error) {
@@ -33,7 +34,17 @@ export const getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const product = await Product.findByPk(id);
+    const product = await sequelize.query(
+      `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
+      FROM Products p
+      LEFT JOIN Categories c
+      ON p.category_id = c.id
+      WHERE p.id = :id`,
+      {
+        replacements: { id },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
 
     if (!product) {
       return res.status(404).json({
@@ -45,7 +56,7 @@ export const getProductById = async (req, res) => {
     res.json({
       error: false,
       message: "Producto encontrado",
-      product,
+      product: product[0],
     });
   } catch (error) {
     console.error(error);

@@ -6,7 +6,7 @@ const imagePath = "images";
 export const uploadImage = async (req, res) => {
   try {
     const { folder = "uploads" } = req.body;
-    const file = req.files.file;
+    const file = req.files.image;
     const fileName = file.name;
 
     // Verificar si el archivo es una imagen

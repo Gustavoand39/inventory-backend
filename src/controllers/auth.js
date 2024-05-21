@@ -15,7 +15,7 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         error: true,
-        message: "Usuario no encontrado",
+        message: "No existe ese usuario",
       });
     }
 

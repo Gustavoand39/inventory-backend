@@ -20,11 +20,11 @@ const router = Router();
 // Obtener los productos que están por debajo del stock mínimo
 router.get("/low", validateToken, getProductsLowStock);
 
-// Obtener todos los productos
-router.get("/", validateToken, getProducts);
-
 // Obtener un producto por id
 router.get("/:id", validateToken, getProductById);
+
+// Obtener todos los productos
+router.get("/", validateToken, getProducts);
 
 // Crear un producto
 router.post("/", validateToken, createProduct);

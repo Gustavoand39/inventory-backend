@@ -11,11 +11,11 @@ const router = Router();
 
 //? Api path: /categories/
 
-// Obtener todas las categorías
-router.get("/", getCategories);
-
 // Obtener una categoría por id
 router.get("/:id", getCategoryById);
+
+// Obtener todas las categorías
+router.get("/", getCategories);
 
 // Crear una categoría
 router.post("/", createCategory);
