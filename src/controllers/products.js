@@ -6,11 +6,26 @@ const Product = require("../models/Product.js");
 
 const getProducts = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1; // Página actual, predeterminada es 1
+    const limit = parseInt(req.query.limit) || 10; // Número de productos por página, predeterminado es 10
+
+    const offset = (page - 1) * limit; // Calcular el desplazamiento
+
     const products = await sequelize.query(
       `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
       FROM Products p
       LEFT JOIN Categories c
-      ON p.category_id = c.id`,
+      ON p.category_id = c.id
+      LIMIT :limit OFFSET :offset`,
+      {
+        replacements: { limit, offset },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
+
+    // Consulta para obtener el total de productos
+    const total = await sequelize.query(
+      `SELECT COUNT(*) as total FROM Products`,
       {
         type: sequelize.QueryTypes.SELECT,
       }
@@ -20,6 +35,7 @@ const getProducts = async (req, res) => {
       error: false,
       message: "Productos obtenidos",
       products,
+      total: total[0].total,
     });
   } catch (error) {
     console.error(error);
