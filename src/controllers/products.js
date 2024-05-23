@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 
 const sequelize = require("../db/connection.js");
 const Product = require("../models/Product.js");
+const Category = require("../models/Category.js");
 
 const getProducts = async (req, res) => {
   try {
@@ -260,8 +261,6 @@ const getProductsLowStock = async (req, res) => {
       },
     });
 
-    console.log("-->", products);
-
     res.json({
       error: false,
       products,
@@ -317,18 +316,36 @@ const searchProduct = async (req, res) => {
       where: {
         name: {
           [Op.like]: `%${word}%`,
-        },
+        }, // Buscar por nombre
       },
+      include: [
+        {
+          model: Category,
+          attributes: ["name"],
+          required: false,
+        }, // Left join con la tabla de categorías
+      ],
       limit: parseInt(limit),
       offset: parseInt(offset),
     });
+
+    // Mapear para devolver solo los campos necesarios
+    const mappedProducts = products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      stock: product.stock,
+      minStock: product.minStock,
+      image: product.image,
+      category: product.Category.name,
+    }));
 
     const totalPages = Math.ceil(count / limit);
 
     res.json({
       error: false,
       message: "Productos encontrados",
-      products,
+      products: mappedProducts,
       totalItems: count,
       totalPages,
     });
