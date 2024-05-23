@@ -6,10 +6,10 @@ const Product = require("../models/Product.js");
 
 const getProducts = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1; // Página actual, predeterminada es 1
-    const limit = parseInt(req.query.limit) || 10; // Número de productos por página, predeterminado es 10
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
-    const offset = (page - 1) * limit; // Calcular el desplazamiento
+    const offset = (page - 1) * limit;
 
     const products = await sequelize.query(
       `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
@@ -24,18 +24,24 @@ const getProducts = async (req, res) => {
     );
 
     // Consulta para obtener el total de productos
-    const total = await sequelize.query(
+    const totalProducts = await sequelize.query(
       `SELECT COUNT(*) as total FROM Products`,
       {
         type: sequelize.QueryTypes.SELECT,
       }
     );
 
+    const totalProd = totalProducts[0].total;
+
+    // Calcular el número total de páginas
+    const totalPages = Math.ceil(totalProd / limit);
+
     res.json({
       error: false,
       message: "Productos obtenidos",
       products,
-      total: total[0].total,
+      totalItems: totalProd,
+      totalPages: totalPages,
     });
   } catch (error) {
     console.error(error);
