@@ -307,6 +307,40 @@ const updateImage = async (req, res) => {
   }
 };
 
+const searchProduct = async (req, res) => {
+  const { word, page = 1, limit = 10 } = req.query;
+
+  try {
+    const offset = (page - 1) * limit;
+
+    const { count, rows: products } = await Product.findAndCountAll({
+      where: {
+        name: {
+          [Op.like]: `%${word}%`,
+        },
+      },
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      error: false,
+      message: "Productos encontrados",
+      products,
+      totalItems: count,
+      totalPages,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor",
+    });
+  }
+};
+
 module.exports = {
   getProducts,
   getProductById,
@@ -317,4 +351,5 @@ module.exports = {
   updateMinStock,
   getProductsLowStock,
   updateImage,
+  searchProduct,
 };

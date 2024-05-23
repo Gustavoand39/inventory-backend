@@ -10,12 +10,16 @@ const {
   updateMinStock,
   getProductsLowStock,
   updateImage,
+  searchProduct,
 } = require("../controllers/products.js");
 const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
 
 //? Api path: /products/
+
+// Buscar un producto
+router.get("/search", validateToken, searchProduct);
 
 // Obtener los productos que están por debajo del stock mínimo
 router.get("/low", validateToken, getProductsLowStock);
