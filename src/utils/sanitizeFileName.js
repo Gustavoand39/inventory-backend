@@ -3,7 +3,7 @@ const sanitizeFilename = (filename) => {
   const sanitizedFilename = filename.replace(/[^\w.-]/g, '_');
   
   // Limitar la longitud del nombre del archivo
-  const maxLength = 255; // Máxima longitud permitida
+  const maxLength = 100; // Máxima longitud permitida
   const truncatedFilename = sanitizedFilename.slice(0, maxLength);
 
   return truncatedFilename;

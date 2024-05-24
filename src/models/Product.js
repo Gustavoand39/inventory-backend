@@ -25,7 +25,7 @@ const Product = connection.define("Product", {
     allowNull: true,
   },
   image: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.STRING(100),
     allowNull: true,
   },
   categoryId: {

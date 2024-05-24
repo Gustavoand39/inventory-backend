@@ -1,6 +1,7 @@
 const fs = require("fs");
 const sharp = require("sharp");
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 const imagePath = path.join(__dirname, "../../public/uploads");
 
@@ -29,17 +30,20 @@ const uploadImage = async (req, res) => {
       fs.mkdirSync(folderPath, { recursive: true });
     }
 
+    // Generar un nombre de archivo único usando UUID
+    const uniqueFileName = `${uuidv4()}-${fileName}`;
+
     // Redimensionar la imagen a 200x200 y convertirla a JPEG
     const image = await sharp(file.data).resize(200, 200).toBuffer();
 
     // Guardar el buffer de la imagen en un archivo
-    const filePath = path.join(folderPath, fileName);
+    const filePath = path.join(folderPath, uniqueFileName);
     fs.writeFileSync(filePath, image);
 
     return res.status(200).json({
       error: false,
       message: "Archivo subido correctamente",
-      data: `uploads/${folder}/${fileName}`,
+      data: `uploads/${folder}/${uniqueFileName}`,
     });
   } catch (error) {
     console.error(error);
