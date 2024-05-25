@@ -1,6 +1,6 @@
 const Category = require("../models/Category.js");
 
-const getCategories = async (req, res) => {
+const getListCategories = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -19,7 +19,7 @@ const getCategories = async (req, res) => {
     res.status(200).json({
       error: false,
       message: "Categorías encontradas",
-      categories: categories,
+      data: categories,
       totalItems: totalCategories,
       totalPages,
     });
@@ -32,14 +32,14 @@ const getCategories = async (req, res) => {
   }
 };
 
-const getAllCategories = async (req, res) => {
+const getCategories = async (req, res) => {
   try {
     const categories = await Category.findAll();
 
     res.status(200).json({
       error: false,
       message: "Categorías encontradas",
-      categories: categories,
+      data: categories,
     });
   } catch (error) {
     console.error("Error al obtener las categorías", error);
@@ -156,8 +156,8 @@ const deleteCategory = async (req, res) => {
 };
 
 module.exports = {
+  getListCategories,
   getCategories,
-  getAllCategories,
   getCategoryById,
   createCategory,
   updateCategory,
