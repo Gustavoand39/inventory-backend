@@ -1,15 +1,12 @@
 const { Router } = require("express");
 
 const {
-  getProducts,
+  getListProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
-  updateStock,
-  updateMinStock,
   getProductsLowStock,
-  updateImage,
   searchProduct,
 } = require("../controllers/products.js");
 const validateToken = require("../middlewares/validateToken.js");
@@ -28,7 +25,7 @@ router.get("/low", validateToken, getProductsLowStock);
 router.get("/:id", validateToken, getProductById);
 
 // Obtener todos los productos
-router.get("/", validateToken, getProducts);
+router.get("/", validateToken, getListProducts);
 
 // Crear un producto
 router.post("/", validateToken, createProduct);
@@ -38,14 +35,5 @@ router.put("/:id", validateToken, updateProduct);
 
 // Eliminar un producto
 router.delete("/:id", validateToken, deleteProduct);
-
-// Actualizar el stock de un producto
-router.patch("/:id/stock", validateToken, updateStock);
-
-// Actualizar el stock mínimo de un producto
-router.patch("/:id/minStock", validateToken, updateMinStock);
-
-// Actualizar la imagen de un producto
-router.patch("/:id/image", validateToken, updateImage);
 
 module.exports = router;

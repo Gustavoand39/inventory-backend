@@ -5,7 +5,7 @@ const sequelize = require("../db/connection.js");
 const Product = require("../models/Product.js");
 const Category = require("../models/Category.js");
 
-const getProducts = async (req, res) => {
+const getListProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -53,24 +53,6 @@ const getProducts = async (req, res) => {
   }
 };
 
-const getAllProducts = async (req, res) => {
-  try {
-    const products = await Product.findAll();
-
-    res.status(200).json({
-      error: false,
-      message: "Productos encontrados",
-      data: products,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: true,
-      message: "Error interno del servidor",
-    });
-  }
-};
-
 const getProductById = async (req, res) => {
   const { id } = req.params;
 
@@ -94,10 +76,10 @@ const getProductById = async (req, res) => {
       });
     }
 
-    res.json({
+    res.status(200).json({
       error: false,
       message: "Producto encontrado",
-      product: product[0],
+      data: product[0],
     });
   } catch (error) {
     console.error(error);
@@ -112,7 +94,7 @@ const createProduct = async (req, res) => {
   const { name, description, stock, minStock, image, category } = req.body;
 
   try {
-    const product = await Product.create({
+    await Product.create({
       name,
       description,
       stock,
@@ -121,10 +103,9 @@ const createProduct = async (req, res) => {
       categoryId: category,
     });
 
-    res.json({
+    res.status(201).json({
       error: false,
       message: "Producto creado exitosamente",
-      product,
     });
   } catch (error) {
     console.error(error);
@@ -158,10 +139,10 @@ const updateProduct = async (req, res) => {
       image,
     });
 
-    res.json({
+    res.status(200).json({
       error: false,
       message: "Producto actualizado exitosamente",
-      product,
+      data: product,
     });
   } catch (error) {
     console.error(error);
@@ -189,75 +170,9 @@ const deleteProduct = async (req, res) => {
 
     await product.destroy();
 
-    res.json({
+    res.status(200).json({
       error: false,
       message: "Producto eliminado",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: true,
-      message: "Error interno del servidor",
-    });
-  }
-};
-
-const updateStock = async (req, res) => {
-  const { id } = req.params;
-  const { quantity } = req.body;
-
-  try {
-    const product = await Product.findByPk(id);
-
-    if (!product) {
-      return res.status(404).json({
-        error: true,
-        message: "Producto no encontrado",
-      });
-    }
-
-    const newStock = product.stock + quantity;
-
-    await product.update({
-      stock: newStock,
-    });
-
-    res.json({
-      error: false,
-      message: "Stock actualizado exitosamente",
-      product,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: true,
-      message: "Error interno del servidor",
-    });
-  }
-};
-
-const updateMinStock = async (req, res) => {
-  const { id } = req.params;
-  const { minStock } = req.body;
-
-  try {
-    const product = await Product.findByPk(id);
-
-    if (!product) {
-      return res.status(404).json({
-        error: true,
-        message: "Producto no encontrado",
-      });
-    }
-
-    await product.update({
-      minStock,
-    });
-
-    res.json({
-      error: false,
-      message: "Stock mínimo actualizado exitosamente",
-      product,
     });
   } catch (error) {
     console.error(error);
@@ -279,41 +194,10 @@ const getProductsLowStock = async (req, res) => {
       },
     });
 
-    res.json({
+    res.status(200).json({
       error: false,
-      products,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: true,
-      message: "Error interno del servidor",
-    });
-  }
-};
-
-const updateImage = async (req, res) => {
-  const { id } = req.params;
-  const { image } = req.body;
-
-  try {
-    const product = await Product.findByPk(id);
-
-    if (!product) {
-      return res.status(404).json({
-        error: true,
-        message: "Producto no encontrado",
-      });
-    }
-
-    await product.update({
-      image,
-    });
-
-    res.json({
-      error: false,
-      message: "Imagen actualizada exitosamente",
-      product,
+      message: "Productos con stock bajo",
+      data: products,
     });
   } catch (error) {
     console.error(error);
@@ -363,7 +247,7 @@ const searchProduct = async (req, res) => {
     res.json({
       error: false,
       message: "Productos encontrados",
-      products: mappedProducts,
+      data: mappedProducts,
       totalItems: count,
       totalPages,
     });
@@ -377,14 +261,11 @@ const searchProduct = async (req, res) => {
 };
 
 module.exports = {
-  getProducts,
+  getListProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
-  updateStock,
-  updateMinStock,
   getProductsLowStock,
-  updateImage,
   searchProduct,
 };
