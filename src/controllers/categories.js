@@ -32,6 +32,24 @@ const getCategories = async (req, res) => {
   }
 };
 
+const getAllCategories = async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+
+    res.status(200).json({
+      error: false,
+      message: "Categorías encontradas",
+      categories: categories,
+    });
+  } catch (error) {
+    console.error("Error al obtener las categorías", error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor",
+    });
+  }
+};
+
 const getCategoryById = async (req, res) => {
   const { id } = req.params;
 
@@ -139,6 +157,7 @@ const deleteCategory = async (req, res) => {
 
 module.exports = {
   getCategories,
+  getAllCategories,
   getCategoryById,
   createCategory,
   updateCategory,

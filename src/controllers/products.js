@@ -37,12 +37,30 @@ const getProducts = async (req, res) => {
     // Calcular el número total de páginas
     const totalPages = Math.ceil(totalProd / limit);
 
-    res.json({
+    res.status(200).json({
       error: false,
       message: "Productos obtenidos",
-      products,
+      data: products,
       totalItems: totalProd,
       totalPages,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+const getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll();
+
+    res.status(200).json({
+      error: false,
+      message: "Productos encontrados",
+      data: products,
     });
   } catch (error) {
     console.error(error);

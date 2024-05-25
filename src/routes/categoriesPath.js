@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const {
   getCategories,
+  getAllCategories,
   getCategoryById,
   createCategory,
   updateCategory,
@@ -11,10 +12,13 @@ const router = Router();
 
 //? Api path: /categories/
 
+// Obtener todas las categorías
+router.get("/all", getAllCategories);
+
 // Obtener una categoría por id
 router.get("/:id", getCategoryById);
 
-// Obtener todas las categorías
+// Obtener todas las categorías paginadas
 router.get("/", getCategories);
 
 // Crear una categoría
