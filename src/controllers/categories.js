@@ -2,11 +2,26 @@ const Category = require("../models/Category.js");
 
 const getCategories = async (req, res) => {
   try {
-    const categories = await Category.findAll();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const offset = (page - 1) * limit;
+
+    const categories = await Category.findAll({
+      offset,
+      limit,
+    });
+
+    const totalCategories = await Category.count();
+
+    const totalPages = Math.ceil(totalCategories / limit);
+
     res.status(200).json({
       error: false,
       message: "Categorías encontradas",
-      data: categories,
+      categories: categories,
+      totalItems: totalCategories,
+      totalPages,
     });
   } catch (error) {
     console.error("Error al obtener las categorías", error);

@@ -7,7 +7,6 @@ const cors = require("cors");
 
 const authPath = require("../routes/authPath");
 const usersPath = require("../routes/usersPath");
-const rolesPath = require("../routes/rolesPath");
 const productsPath = require("../routes/productsPath");
 const categoriesPath = require("../routes/categoriesPath");
 const inventoryPath = require("../routes/inventoryPath");
@@ -49,7 +48,6 @@ class Server {
   routes() {
     this.app.use("/auth", authPath);
     this.app.use("/users", usersPath);
-    this.app.use("/roles", rolesPath);
     this.app.use("/products", productsPath);
     this.app.use("/categories", categoriesPath);
     this.app.use("/inventory", inventoryPath);

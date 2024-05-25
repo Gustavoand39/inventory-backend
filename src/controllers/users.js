@@ -48,7 +48,7 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { name, lastName, userName, email, password, roleId } = req.body;
+  const { name, lastName, userName, email, password } = req.body;
 
   try {
     const [existingEmail, existingUserName] = await Promise.all([
@@ -79,7 +79,6 @@ const createUser = async (req, res) => {
       user_name: userName,
       email,
       password: hashedPassword,
-      roleId,
     });
 
     res.status(201).json({

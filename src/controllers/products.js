@@ -42,7 +42,7 @@ const getProducts = async (req, res) => {
       message: "Productos obtenidos",
       products,
       totalItems: totalProd,
-      totalPages: totalPages,
+      totalPages,
     });
   } catch (error) {
     console.error(error);
