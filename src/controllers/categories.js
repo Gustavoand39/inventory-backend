@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 const Category = require("../models/Category.js");
 
 const getListCategories = async (req, res) => {
@@ -155,6 +157,40 @@ const deleteCategory = async (req, res) => {
   }
 };
 
+const searchCategories = async (req, res) => {
+  const { word, page = 1, limit = 10 } = req.query;
+
+  try {
+    const offset = (page - 1) * limit;
+
+    const { count, rows: categories } = await Category.findAndCountAll({
+      where: {
+        name: {
+          [Op.like]: `%${word}%`,
+        },
+      },
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.status(200).json({
+      error: false,
+      message: "Categorías encontradas",
+      data: categories,
+      totalItems: count,
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error al buscar las categorías", error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor",
+    });
+  }
+};
+
 module.exports = {
   getListCategories,
   getCategories,
@@ -162,4 +198,5 @@ module.exports = {
   createCategory,
   updateCategory,
   deleteCategory,
+  searchCategories,
 };

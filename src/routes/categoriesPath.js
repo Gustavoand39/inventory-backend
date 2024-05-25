@@ -6,6 +6,7 @@ const {
   createCategory,
   updateCategory,
   deleteCategory,
+  searchCategories,
 } = require("../controllers/categories.js");
 
 const router = Router();
@@ -14,6 +15,9 @@ const router = Router();
 
 // Obtener todas las categorías
 router.get("/all", getCategories);
+
+// Buscar una categoría
+router.get("/search", searchCategories);
 
 // Obtener las categorías paginadas
 router.get("/", getListCategories);
