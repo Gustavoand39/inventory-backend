@@ -118,7 +118,7 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, price, description, stock, minStock, image } = req.body;
+  const { name, description, stock, minStock, image, category } = req.body;
 
   try {
     const product = await Product.findByPk(id);
@@ -132,11 +132,11 @@ const updateProduct = async (req, res) => {
 
     await product.update({
       name,
-      price,
       description,
       stock,
       minStock,
       image,
+      categoryId: category,
     });
 
     res.status(200).json({
