@@ -1,15 +1,31 @@
 const bcrypt = require("bcrypt");
+const { Op } = require("sequelize");
 
 const User = require("../models/User.js");
 
-const getUsers = async (req, res) => {
+const getListUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
-    res.json({
+    const offset = (page - 1) * limit;
+
+    const users = await User.findAll({
+      attributes: { exclude: ["password"] },
+      limit,
+      offset,
+    });
+
+    const totalUsers = await User.count();
+
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.status(200).json({
       error: false,
       message: "Usuarios obtenidos",
-      users,
+      data: users,
+      totalItems: totalUsers,
+      totalPages,
     });
   } catch (error) {
     console.error(error);
@@ -24,7 +40,9 @@ const getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findByPk(id);
+    const user = await User.findByPk(id, {
+      attributes: { exclude: ["password"] },
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -36,7 +54,7 @@ const getUserById = async (req, res) => {
     res.json({
       error: false,
       message: "Usuario obtenido",
-      user,
+      data: user,
     });
   } catch (error) {
     console.error(error);
@@ -48,12 +66,12 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { name, lastName, userName, email, password } = req.body;
+  const { name, last_name, user_name, email, password } = req.body;
 
   try {
     const [existingEmail, existingUserName] = await Promise.all([
       User.findOne({ where: { email } }),
-      User.findOne({ where: { user_name: userName } }),
+      User.findOne({ where: { user_name } }),
     ]);
 
     if (existingEmail)
@@ -75,8 +93,8 @@ const createUser = async (req, res) => {
     // Crear el usuario con la contraseña encriptada
     const user = await User.create({
       name,
-      last_name: lastName,
-      user_name: userName,
+      last_name,
+      user_name,
       email,
       password: hashedPassword,
     });
@@ -84,10 +102,6 @@ const createUser = async (req, res) => {
     res.status(201).json({
       error: false,
       message: "Usuario creado exitosamente",
-      user: {
-        id: user.id,
-        userName: user.userName,
-      },
     });
   } catch (error) {
     console.error("Error creando usuario:", error);
@@ -123,7 +137,7 @@ const updateUser = async (req, res) => {
     res.json({
       error: false,
       message: "Usuario actualizado",
-      user,
+      data: user,
     });
   } catch (error) {
     console.error("Error actualizando usuario:", error);
@@ -151,7 +165,50 @@ const deleteUser = async (req, res) => {
 
     res.json({
       error: false,
-      message: "Usuario eliminado",
+      message: "Usuario eliminado exitosamente",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+const searchUser = async (req, res) => {
+  const { query, page = 1, limit = 10 } = req.query;
+
+  try {
+    const offset = (page - 1) * limit;
+
+    const { count, rows: users } = await User.findAndCountAll({
+      where: {
+        [Op.or]: [
+          {
+            name: {
+              [Op.like]: `%${query}%`,
+            },
+          },
+          {
+            user_name: {
+              [Op.like]: `%${query}%`,
+            },
+          },
+        ],
+      },
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+    });
+
+    const totalPages = Math.ceil(users.length / limit);
+
+    res.json({
+      error: false,
+      message: "Usuarios obtenidos",
+      data: users,
+      totalItems: count,
+      totalPages,
     });
   } catch (error) {
     console.error(error);
@@ -163,9 +220,10 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  getUsers,
+  getListUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
+  searchUser,
 };
