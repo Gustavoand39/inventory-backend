@@ -1,9 +1,11 @@
 const fs = require("fs");
 const { Op } = require("sequelize");
+const jwt = require("jsonwebtoken");
 
 const sequelize = require("../db/connection.js");
 const Product = require("../models/Product.js");
 const Category = require("../models/Category.js");
+const Inventory = require("../models/Inventory.js");
 
 const getListProducts = async (req, res) => {
   try {
@@ -130,6 +132,8 @@ const updateProduct = async (req, res) => {
       });
     }
 
+    const oldState = product.toJSON();
+
     await product.update({
       name,
       description,
@@ -139,15 +143,33 @@ const updateProduct = async (req, res) => {
       categoryId: category,
     });
 
+    // Obtener el token de autorización
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+
+    // Decodificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
+
+    const newState = product.toJSON();
+
+    // Crear registro de inventario después de la actualización del producto
+    await Inventory.create({
+      productId: id,
+      userId: decoded.userId,
+      details: `Producto editado`,
+      oldState: oldState,
+      newState: newState,
+    });
+
     res.status(200).json({
       error: false,
       message: "Producto actualizado exitosamente",
       data: product,
     });
-
-    // const authHeader = req.headers.authorization;
   } catch (error) {
-    console.error(error);
+    console.error("Error al actualizar el producto", error);
     res.status(500).json({
       error: true,
       message: "Error interno del servidor",

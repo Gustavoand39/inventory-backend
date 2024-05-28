@@ -10,7 +10,6 @@ const usersPath = require("../routes/usersPath");
 const productsPath = require("../routes/productsPath");
 const categoriesPath = require("../routes/categoriesPath");
 const inventoryPath = require("../routes/inventoryPath");
-const movementsPath = require("../routes/movementsPath");
 const uploadFilePath = require("../routes/uploadFilePath");
 
 class Server {
@@ -51,7 +50,6 @@ class Server {
     this.app.use("/products", productsPath);
     this.app.use("/categories", categoriesPath);
     this.app.use("/inventory", inventoryPath);
-    this.app.use("/movements", movementsPath);
     this.app.use("/upload", uploadFilePath);
   }
 

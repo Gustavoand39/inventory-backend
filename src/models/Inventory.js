@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 
 const connection = require("../db/connection.js");
-const Movement = require("./Movement.js");
 const Product = require("./Product.js");
 const User = require("./User.js");
 
@@ -12,14 +11,6 @@ const Inventory = connection.define(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-    },
-    movementId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Movement",
-        key: "id",
-      },
     },
     productId: {
       type: DataTypes.INTEGER,
@@ -38,7 +29,15 @@ const Inventory = connection.define(
       },
     },
     details: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    newState: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+    oldState: {
+      type: DataTypes.JSON,
       allowNull: false,
     },
   },
@@ -47,9 +46,6 @@ const Inventory = connection.define(
     timestamps: true,
   }
 );
-
-Inventory.belongsTo(Movement, { foreignKey: "movementId" });
-Movement.hasMany(Inventory, { foreignKey: "movementId" });
 
 Inventory.belongsTo(Product, { foreignKey: "productId" });
 Product.hasMany(Inventory, { foreignKey: "productId" });

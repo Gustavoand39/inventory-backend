@@ -1,4 +1,6 @@
-const Inventory = require("../models/inventory.js");
+const Inventory = require("../models/Inventory.js");
+const Product = require("../models/Product.js");
+const User = require("../models/User.js");
 
 const getInventory = async (req, res) => {
   try {
@@ -7,6 +9,55 @@ const getInventory = async (req, res) => {
     res.status(200).json({
       ok: true,
       data: inventory,
+    });
+  } catch (error) {
+    console.error("Error al obtener los inventarios", error);
+    res.status(500).json({
+      error: true,
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+const getLastInventory = async (req, res) => {
+  try {
+    // Obtener los 10 inventarios más recientes y hacer join para obtener el nombre del producto y del usuario
+    const inventory = await Inventory.findAll({
+      limit: 10,
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: Product,
+          attributes: ["name"], // Solo incluye el nombre del producto
+        },
+        {
+          model: User,
+          attributes: ["name"], // Solo incluye el nombre del usuario
+        },
+      ],
+    });
+
+    if (!inventory) {
+      return res.status(404).json({
+        error: true,
+        message: "Inventarios no encontrados",
+      });
+    }
+
+    // Map para obtener solo los datos necesarios
+    const mappedInventory = inventory.map((item) => {
+      return {
+        id: item.id,
+        product: item.Product.name,
+        user: item.User.name,
+        details: item.details,
+        date: item.createdAt,
+      };
+    });
+
+    res.status(200).json({
+      ok: true,
+      data: mappedInventory,
     });
   } catch (error) {
     console.error("Error al obtener los inventarios", error);
@@ -44,74 +95,17 @@ const getInventoryById = async (req, res) => {
 };
 
 const createInventory = async (req, res) => {
-  const { movementId, productId, userId, details } = req.body;
+  const { productId, userId, details } = req.body;
 
   try {
     const inventory = await Inventory.create({
-      movementId,
       productId,
       userId,
       details,
     });
 
     res.status(201).json({
-      error: true,
-      inventory,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, message: "Error interno del servidor" });
-  }
-};
-
-const updateInventory = async (req, res) => {
-  const { id } = req.params;
-  const { movementId, productId, userId, details } = req.body;
-
-  try {
-    const inventory = await Inventory.findByPk(id);
-
-    if (!inventory) {
-      return res.status(404).json({
-        ok: false,
-        message: "Inventario no encontrado",
-      });
-    }
-
-    await inventory.update({
-      movementId,
-      productId,
-      userId,
-      details,
-    });
-
-    res.status(200).json({
-      ok: true,
-      inventory,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, message: "Error interno del servidor" });
-  }
-};
-
-const deleteInventory = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const inventory = await Inventory.findByPk(id);
-
-    if (!inventory) {
-      return res.status(404).json({
-        ok: false,
-        message: "Inventario no encontrado",
-      });
-    }
-
-    await inventory.destroy();
-
-    res.status(200).json({
-      ok: true,
+      error: false,
       inventory,
     });
   } catch (error) {
@@ -122,8 +116,7 @@ const deleteInventory = async (req, res) => {
 
 module.exports = {
   getInventory,
+  getLastInventory,
   getInventoryById,
   createInventory,
-  updateInventory,
-  deleteInventory,
 };
