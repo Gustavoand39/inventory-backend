@@ -1,114 +1,183 @@
-import Product from "../models/Product.js";
+const fs = require("fs");
+const { Op } = require("sequelize");
+const jwt = require("jsonwebtoken");
 
-export const getProducts = async (req, res) => {
+const sequelize = require("../db/connection.js");
+const Product = require("../models/Product.js");
+const Category = require("../models/Category.js");
+const Inventory = require("../models/Inventory.js");
+
+const getListProducts = async (req, res) => {
   try {
-    const products = await Product.findAll();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
-    res.json({
-      ok: true,
-      products,
+    const offset = (page - 1) * limit;
+
+    const products = await sequelize.query(
+      `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
+      FROM Products p
+      LEFT JOIN Categories c
+      ON p.category_id = c.id
+      LIMIT :limit OFFSET :offset`,
+      {
+        replacements: { limit, offset },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
+
+    // Consulta para obtener el total de productos
+    const totalProducts = await sequelize.query(
+      `SELECT COUNT(*) as total FROM Products`,
+      {
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
+
+    const totalProd = totalProducts[0].total;
+
+    // Calcular el número total de páginas
+    const totalPages = Math.ceil(totalProd / limit);
+
+    res.status(200).json({
+      error: false,
+      message: "Productos obtenidos",
+      data: products,
+      totalItems: totalProd,
+      totalPages,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
 };
 
-export const getProductById = async (req, res) => {
+const getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const product = await Product.findByPk(id);
+    const product = await sequelize.query(
+      `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
+      FROM Products p
+      LEFT JOIN Categories c
+      ON p.category_id = c.id
+      WHERE p.id = :id`,
+      {
+        replacements: { id },
+        type: sequelize.QueryTypes.SELECT,
+      }
+    );
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
 
-    res.json({
-      ok: true,
+    res.status(200).json({
+      error: false,
       message: "Producto encontrado",
-      product,
+      data: product[0],
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
 };
 
-export const createProduct = async (req, res) => {
-  const { name, price, description, stock, minStock, image } = req.body;
+const createProduct = async (req, res) => {
+  const { name, description, stock, minStock, image, category } = req.body;
 
   try {
-    const product = await Product.create({
+    await Product.create({
       name,
-      price,
       description,
       stock,
       minStock,
       image,
+      categoryId: category,
     });
 
-    res.json({
-      ok: true,
+    res.status(201).json({
+      error: false,
       message: "Producto creado exitosamente",
-      product,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
 };
 
-export const updateProduct = async (req, res) => {
+const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, price, description, stock, minStock, image } = req.body;
+  const { name, description, stock, minStock, image, category } = req.body;
 
   try {
     const product = await Product.findByPk(id);
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
+
+    const oldState = product.toJSON();
 
     await product.update({
       name,
-      price,
       description,
       stock,
       minStock,
       image,
+      categoryId: category,
     });
 
-    res.json({
-      ok: true,
+    // Obtener el token de autorización
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+
+    // Decodificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
+
+    const newState = product.toJSON();
+
+    // Crear registro de inventario después de la actualización del producto
+    await Inventory.create({
+      productId: id,
+      userId: decoded.userId,
+      details: `Producto editado`,
+      oldState: oldState,
+      newState: newState,
+    });
+
+    res.status(200).json({
+      error: false,
       message: "Producto actualizado exitosamente",
-      product,
+      data: product,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al actualizar el producto", error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
 };
 
-export const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -116,120 +185,130 @@ export const deleteProduct = async (req, res) => {
 
     if (!product) {
       return res.status(404).json({
-        ok: false,
+        error: true,
         message: "Producto no encontrado",
       });
     }
 
+    if (product.image) fs.unlinkSync(`public/${product.image}`);
+
     await product.destroy();
 
-    res.json({
-      ok: true,
+    res.status(200).json({
+      error: false,
       message: "Producto eliminado",
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
 };
 
-export const updateStock = async (req, res) => {
-  const { id } = req.params;
-  const { quantity } = req.body;
-
+// Obtener los productos que están por debajo del stock mínimo
+const getProductsLowStock = async (req, res) => {
   try {
-    const product = await Product.findByPk(id);
-
-    if (!product) {
-      return res.status(404).json({
-        ok: false,
-        message: "Producto no encontrado",
-      });
-    }
-
-    const newStock = product.stock + quantity;
-
-    await product.update({
-      stock: newStock,
+    // Obtener los productos cuyo stock esté igual o menor que minStock
+    const products = await Product.findAll({
+      where: {
+        stock: {
+          [Op.lte]: sequelize.col("min_stock"),
+        },
+      },
+      include: [
+        {
+          model: Category,
+          attributes: ["name"],
+          required: false,
+        }, // Left join con la tabla de categorías
+      ],
     });
 
-    res.json({
-      ok: true,
-      message: "Stock actualizado exitosamente",
-      product,
+    // Mapear para devolver solo los campos necesarios
+    const mappedProducts = products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      stock: product.stock,
+      minStock: product.minStock,
+      image: product.image,
+      category: product.Category.name,
+    }));
+
+    res.status(200).json({
+      error: false,
+      message: "Productos con stock bajo",
+      data: mappedProducts,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
 };
 
-export const updateMinStock = async (req, res) => {
-  const { id } = req.params;
-  const { minStock } = req.body;
+const searchProduct = async (req, res) => {
+  const { word, page = 1, limit = 10 } = req.query;
 
   try {
-    const product = await Product.findByPk(id);
+    const offset = (page - 1) * limit;
 
-    if (!product) {
-      return res.status(404).json({
-        ok: false,
-        message: "Producto no encontrado",
-      });
-    }
-
-    await product.update({
-      minStock,
+    const { count, rows: products } = await Product.findAndCountAll({
+      where: {
+        name: {
+          [Op.like]: `%${word}%`,
+        }, // Buscar por nombre
+      },
+      include: [
+        {
+          model: Category,
+          attributes: ["name"],
+          required: false,
+        }, // Left join con la tabla de categorías
+      ],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
     });
 
+    // Mapear para devolver solo los campos necesarios
+    const mappedProducts = products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      stock: product.stock,
+      minStock: product.minStock,
+      image: product.image,
+      category: product.Category.name,
+    }));
+
+    const totalPages = Math.ceil(count / limit);
+
     res.json({
-      ok: true,
-      message: "Stock mínimo actualizado exitosamente",
-      product,
+      error: false,
+      message: "Productos encontrados",
+      data: mappedProducts,
+      totalItems: count,
+      totalPages,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      ok: false,
+      error: true,
       message: "Error interno del servidor",
     });
   }
 };
 
-export const updateImage = async (req, res) => {
-  const { id } = req.params;
-  const { image } = req.body;
-
-  try {
-    const product = await Product.findByPk(id);
-
-    if (!product) {
-      return res.status(404).json({
-        ok: false,
-        message: "Producto no encontrado",
-      });
-    }
-
-    await product.update({
-      image,
-    });
-
-    res.json({
-      ok: true,
-      message: "Imagen actualizada exitosamente",
-      product,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Error interno del servidor",
-    });
-  }
+module.exports = {
+  getListProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getProductsLowStock,
+  searchProduct,
 };

@@ -1,11 +1,11 @@
-import jwt from "jsonwebtoken"; // Se usa para generar el token
-import bcrypt from "bcrypt"; // Se usa para comparar contraseñas
+const jwt = require("jsonwebtoken"); // Se usa para generar el token
+const bcrypt = require("bcrypt"); // Se usa para comparar contraseñas
 
-import User from "../models/User.js";
+const User = require("../models/User.js");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
@@ -15,7 +15,7 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         error: true,
-        message: "Usuario no encontrado",
+        message: "No existe ese usuario",
       });
     }
 
@@ -33,7 +33,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { userId: user.id, username: user.user_name }, // Datos que se guardarán en el token
       JWT_SECRET, // Clave secreta
-      { expiresIn: "5s" }
+      { expiresIn: "1h" }
     );
 
     // Retornar el token y datos básicos del usuario
@@ -55,7 +55,7 @@ export const login = async (req, res) => {
   }
 };
 
-export const refreshToken = async (req, res) => {
+const refreshToken = async (req, res) => {
   const { token } = req.body;
 
   try {
@@ -104,4 +104,9 @@ export const refreshToken = async (req, res) => {
       message: "Tu sesión ha expirado",
     });
   }
+};
+
+module.exports = {
+  login,
+  refreshToken,
 };

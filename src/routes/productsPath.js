@@ -1,42 +1,39 @@
-import { Router } from "express";
+const { Router } = require("express");
 
-import {
-  getProducts,
+const {
+  getListProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
-  updateStock,
-  updateMinStock,
-  updateImage,
-} from "../controllers/products.js";
+  getProductsLowStock,
+  searchProduct,
+} = require("../controllers/products.js");
+const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
 
 //? Api path: /products/
 
-// Obtener todos los productos
-router.get("/", getProducts);
+// Buscar un producto
+router.get("/search", validateToken, searchProduct);
+
+// Obtener los productos que están por debajo del stock mínimo
+router.get("/low", validateToken, getProductsLowStock);
 
 // Obtener un producto por id
-router.get("/:id", getProductById);
+router.get("/:id", validateToken, getProductById);
+
+// Obtener todos los productos
+router.get("/", validateToken, getListProducts);
 
 // Crear un producto
-router.post("/", createProduct);
+router.post("/", validateToken, createProduct);
 
 // Actualizar un producto
-router.put("/:id", updateProduct);
+router.put("/:id", validateToken, updateProduct);
 
 // Eliminar un producto
-router.delete("/:id", deleteProduct);
+router.delete("/:id", validateToken, deleteProduct);
 
-// Actualizar el stock de un producto
-router.patch("/:id/stock", updateStock);
-
-// Actualizar el stock mínimo de un producto
-router.patch("/:id/minStock", updateMinStock);
-
-// Actualizar la imagen de un producto
-router.patch("/:id/image", updateImage);
-
-export default router;
+module.exports = router;

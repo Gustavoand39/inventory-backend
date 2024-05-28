@@ -1,6 +1,6 @@
-import { DataTypes } from "sequelize";
-import connection from "../db/connection.js";
-import Category from "./Category.js";
+const { DataTypes } = require("sequelize");
+const connection = require("../db/connection.js");
+const Category = require("./Category.js");
 
 const Product = connection.define("Product", {
   id: {
@@ -24,6 +24,10 @@ const Product = connection.define("Product", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  image: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+  },
   categoryId: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -37,4 +41,4 @@ const Product = connection.define("Product", {
 Product.belongsTo(Category, { foreignKey: "categoryId" });
 Category.hasMany(Product, { foreignKey: "categoryId" });
 
-export default Product;
+module.exports = Product;

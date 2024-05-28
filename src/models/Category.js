@@ -1,17 +1,24 @@
-import { DataTypes } from "sequelize";
+const { DataTypes } = require("sequelize");
 
-import connection from "../db/connection.js";
+const connection = require("../db/connection.js");
 
-const Category = connection.define("Category", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+const Category = connection.define(
+  "Category",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    name: {
+      type: DataTypes.STRING(30),
+      allowNull: false,
+    },
   },
-  name: {
-    type: DataTypes.STRING(30),
-    allowNull: false,
-  },
-});
+  {
+    tableName: "categories",
+    timestamps: true,
+  }
+);
 
-export default Category;
+module.exports = Category;

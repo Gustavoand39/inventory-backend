@@ -1,24 +1,28 @@
-import { Router } from "express";
+const { Router } = require("express");
 
-import {
-  getUsers,
+const {
+  getListUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
-} from "../controllers/users.js";
+  searchUser,
+} = require("../controllers/users.js");
 
-import validateToken from "../middlewares/validateToken.js";
+const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
 
 //? Api path: /users/
 
-// Obtener todos los usuarios
-router.get("/", validateToken, getUsers);
+// Buscar usuarios
+router.get("/search", validateToken, searchUser);
 
 // Obtener un usuario por id
 router.get("/:id", validateToken, getUserById);
+
+// Obtener todos los usuarios
+router.get("/", validateToken, getListUsers);
 
 // Crear un usuario
 router.post("/", validateToken, createUser);
@@ -29,4 +33,4 @@ router.put("/:id", validateToken, updateUser);
 // Eliminar un usuario
 router.delete("/:id", validateToken, deleteUser);
 
-export default router;
+module.exports = router;

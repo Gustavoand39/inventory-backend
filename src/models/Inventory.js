@@ -1,9 +1,8 @@
-import { DataTypes } from "sequelize";
+const { DataTypes } = require("sequelize");
 
-import connection from "../db/connection.js";
-import Movement from "./Movement.js";
-import Product from "./Product.js";
-import User from "./User.js";
+const connection = require("../db/connection.js");
+const Product = require("./Product.js");
+const User = require("./User.js");
 
 const Inventory = connection.define(
   "Inventory",
@@ -12,14 +11,6 @@ const Inventory = connection.define(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-    },
-    movementId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Movement",
-        key: "id",
-      },
     },
     productId: {
       type: DataTypes.INTEGER,
@@ -38,7 +29,15 @@ const Inventory = connection.define(
       },
     },
     details: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    newState: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+    oldState: {
+      type: DataTypes.JSON,
       allowNull: false,
     },
   },
@@ -48,13 +47,10 @@ const Inventory = connection.define(
   }
 );
 
-Inventory.belongsTo(Movement, { foreignKey: "movementId" });
-Movement.hasMany(Inventory, { foreignKey: "movementId" });
-
 Inventory.belongsTo(Product, { foreignKey: "productId" });
 Product.hasMany(Inventory, { foreignKey: "productId" });
 
 Inventory.belongsTo(User, { foreignKey: "userId" });
 User.hasMany(Inventory, { foreignKey: "userId" });
 
-export default Inventory;
+module.exports = Inventory;

@@ -1,7 +1,6 @@
-import { DataTypes } from "sequelize";
+const { DataTypes } = require("sequelize");
 
-import connection from "../db/connection.js";
-import Role from "./Role.js";
+const connection = require("../db/connection.js");
 
 const User = connection.define("User", {
   id: {
@@ -29,17 +28,6 @@ const User = connection.define("User", {
     type: DataTypes.STRING(30),
     allowNull: false,
   },
-  roleId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: "Role",
-      key: "id",
-    },
-  },
 });
 
-User.belongsTo(Role, { foreignKey: "roleId" });
-Role.hasMany(User, { foreignKey: "roleId" });
-
-export default User;
+module.exports = User;
