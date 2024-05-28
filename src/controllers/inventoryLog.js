@@ -1,4 +1,4 @@
-const Inventory = require("../models/Inventory.js");
+const Inventory = require("../models/InventoryLog.js");
 const Product = require("../models/Product.js");
 const User = require("../models/User.js");
 
@@ -35,11 +35,14 @@ const getLastInventory = async (req, res) => {
         user: item.User.name,
         details: item.details,
         date: item.createdAt,
+        newState: item.newState,
+        oldState: item.oldState,
       };
     });
 
     res.status(200).json({
-      ok: true,
+      error: false,
+      message: "Inventarios obtenidos correctamente",
       data: mappedInventory,
     });
   } catch (error) {
@@ -55,7 +58,19 @@ const getInventoryById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const inventory = await Inventory.findByPk(id);
+    // Obtener un inventario por id y hacer join para obtener el nombre del producto y del usuario
+    const inventory = await Inventory.findByPk(id, {
+      include: [
+        {
+          model: Product,
+          attributes: ["name"], // Solo incluye el nombre del producto
+        },
+        {
+          model: User,
+          attributes: ["name"], // Solo incluye el nombre del usuario
+        },
+      ],
+    });
 
     if (!inventory) {
       return res.status(404).json({
@@ -64,9 +79,21 @@ const getInventoryById = async (req, res) => {
       });
     }
 
+    // Mapear los datos necesarios
+    const mappedInventory = {
+      id: inventory.id,
+      product: inventory.Product.name,
+      user: inventory.User.name,
+      details: inventory.details,
+      date: inventory.createdAt,
+      newState: inventory.newState,
+      oldState: inventory.oldState,
+    };
+
     res.status(200).json({
       error: false,
-      data: inventory,
+      message: "Inventario obtenido correctamente",
+      data: mappedInventory,
     });
   } catch (error) {
     console.error("Error al obtener el inventario", error);

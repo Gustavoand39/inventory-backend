@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const sequelize = require("../db/connection.js");
 const Product = require("../models/Product.js");
 const Category = require("../models/Category.js");
-const Inventory = require("../models/Inventory.js");
+const Inventory = require("../models/InventoryLog.js");
 
 const getListProducts = async (req, res) => {
   try {

@@ -4,8 +4,8 @@ const connection = require("../db/connection.js");
 const Product = require("./Product.js");
 const User = require("./User.js");
 
-const Inventory = connection.define(
-  "Inventory",
+const InventoryLog = connection.define(
+  "InventoryLog",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -42,15 +42,15 @@ const Inventory = connection.define(
     },
   },
   {
-    tableName: "inventory",
+    tableName: "inventory_log",
     timestamps: true,
   }
 );
 
-Inventory.belongsTo(Product, { foreignKey: "productId" });
-Product.hasMany(Inventory, { foreignKey: "productId" });
+InventoryLog.belongsTo(Product, { foreignKey: "productId" });
+Product.hasMany(InventoryLog, { foreignKey: "productId" });
 
-Inventory.belongsTo(User, { foreignKey: "userId" });
-User.hasMany(Inventory, { foreignKey: "userId" });
+InventoryLog.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(InventoryLog, { foreignKey: "userId" });
 
-module.exports = Inventory;
+module.exports = InventoryLog;

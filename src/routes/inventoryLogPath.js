@@ -3,7 +3,7 @@ const { Router } = require("express");
 const {
   getLastInventory,
   getInventoryById,
-} = require("../controllers/inventory.js");
+} = require("../controllers/inventoryLog.js");
 const validateToken = require("../middlewares/validateToken.js");
 
 const router = Router();
