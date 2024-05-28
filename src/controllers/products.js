@@ -96,13 +96,30 @@ const createProduct = async (req, res) => {
   const { name, description, stock, minStock, image, category } = req.body;
 
   try {
-    await Product.create({
+    const product = await Product.create({
       name,
       description,
       stock,
       minStock,
       image,
       categoryId: category,
+    });
+
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
+
+    const newState = product.toJSON();
+
+    await Inventory.create({
+      productId: product.id,
+      userId: decoded.userId,
+      details: `Producto creado`,
+      oldState: null,
+      newState: newState,
     });
 
     res.status(201).json({
@@ -193,6 +210,21 @@ const deleteProduct = async (req, res) => {
     if (product.image) fs.unlinkSync(`public/${product.image}`);
 
     await product.destroy();
+
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
+
+    await Inventory.create({
+      productId: null,
+      userId: decoded.userId,
+      details: `Producto eliminado`,
+      oldState: null,
+      newState: product,
+    });
 
     res.status(200).json({
       error: false,

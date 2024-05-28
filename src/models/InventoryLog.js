@@ -14,19 +14,23 @@ const InventoryLog = connection.define(
     },
     productId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "Product",
         key: "id",
       },
+      onDelete: "SET NULL",
+      onUpdate: "CASCADE",
     },
     userId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "User",
         key: "id",
       },
+      onDelete: "SET NULL",
+      onUpdate: "CASCADE",
     },
     details: {
       type: DataTypes.STRING(255),
@@ -38,7 +42,7 @@ const InventoryLog = connection.define(
     },
     oldState: {
       type: DataTypes.JSON,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {
@@ -47,10 +51,18 @@ const InventoryLog = connection.define(
   }
 );
 
-InventoryLog.belongsTo(Product, { foreignKey: "productId" });
+InventoryLog.belongsTo(Product, {
+  foreignKey: "productId",
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+});
 Product.hasMany(InventoryLog, { foreignKey: "productId" });
 
-InventoryLog.belongsTo(User, { foreignKey: "userId" });
+InventoryLog.belongsTo(User, {
+  foreignKey: "userId",
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+});
 User.hasMany(InventoryLog, { foreignKey: "userId" });
 
 module.exports = InventoryLog;

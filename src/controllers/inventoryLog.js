@@ -5,7 +5,7 @@ const Product = require("../models/Product.js");
 const User = require("../models/User.js");
 
 const getListInventory = async (req, res) => {
-  const { page = 1, limit = 10 } = req.params;
+  const { page = 1, limit = 10 } = req.query;
 
   try {
     const offset = (page - 1) * limit;
@@ -13,19 +13,22 @@ const getListInventory = async (req, res) => {
     const { count, rows: inventory } = await Inventory.findAndCountAll({
       limit: parseInt(limit),
       offset: parseInt(offset),
+      order: [["createdAt", "DESC"]], // Ordenar por fecha de creación [DESC]
       include: [
         {
           model: Product,
           attributes: ["name"],
+          required: false, // Permite resultados sin un producto asociado
         },
         {
           model: User,
           attributes: ["name"],
+          required: false, // Permite resultados sin un usuario asociado
         },
       ],
     });
 
-    if (!inventory) {
+    if (inventory.length === 0) {
       return res.status(404).json({
         error: true,
         message: "Inventarios no encontrados",
@@ -38,8 +41,8 @@ const getListInventory = async (req, res) => {
     const mappedInventory = inventory.map((item) => {
       return {
         id: item.id,
-        product: item.Product.name,
-        user: item.User.name,
+        product: item.Product ? item.Product.name : "Producto eliminado",
+        user: item.User ? item.User.name : "Usuario eliminado",
         details: item.details,
         date: item.createdAt,
         newState: item.newState,
@@ -65,23 +68,24 @@ const getListInventory = async (req, res) => {
 
 const getLastInventory = async (req, res) => {
   try {
-    // Obtener los 10 inventarios más recientes y hacer join para obtener el nombre del producto y del usuario
     const inventory = await Inventory.findAll({
       limit: 10,
       order: [["createdAt", "DESC"]],
       include: [
         {
           model: Product,
-          attributes: ["name"], // Solo incluye el nombre del producto
+          attributes: ["name"],
+          required: false, // Permite resultados sin un producto asociado
         },
         {
           model: User,
-          attributes: ["name"], // Solo incluye el nombre del usuario
+          attributes: ["name"],
+          required: false, // Permite resultados sin un usuario asociado
         },
       ],
     });
 
-    if (!inventory) {
+    if (!inventory.length) {
       return res.status(404).json({
         error: true,
         message: "Inventarios no encontrados",
@@ -92,8 +96,8 @@ const getLastInventory = async (req, res) => {
     const mappedInventory = inventory.map((item) => {
       return {
         id: item.id,
-        product: item.Product.name,
-        user: item.User.name,
+        product: item.Product ? item.Product.name : "Producto eliminado",
+        user: item.User ? item.User.name : "Usuario eliminado",
         details: item.details,
         date: item.createdAt,
         newState: item.newState,
@@ -125,10 +129,12 @@ const getInventoryById = async (req, res) => {
         {
           model: Product,
           attributes: ["name"], // Solo incluye el nombre del producto
+          required: false,
         },
         {
           model: User,
           attributes: ["name"], // Solo incluye el nombre del usuario
+          required: false,
         },
       ],
     });
@@ -143,8 +149,10 @@ const getInventoryById = async (req, res) => {
     // Mapear los datos necesarios
     const mappedInventory = {
       id: inventory.id,
-      product: inventory.Product.name,
-      user: inventory.User.name,
+      product: inventory.Product
+        ? inventory.Product.name
+        : "Producto eliminado",
+      user: inventory.User ? inventory.User.name : "Usuario eliminado",
       details: inventory.details,
       date: inventory.createdAt,
       newState: inventory.newState,
@@ -166,7 +174,7 @@ const getInventoryById = async (req, res) => {
 };
 
 const searchInventory = async (req, res) => {
-  const { word, page, limit } = req.query;
+  const { word, page = 1, limit = 10 } = req.query;
 
   try {
     const offset = (page - 1) * limit;
@@ -188,10 +196,12 @@ const searchInventory = async (req, res) => {
         {
           model: Product,
           attributes: ["name"], // Solo incluye el nombre del producto
+          required: false,
         },
         {
           model: User,
           attributes: ["name"], // Solo incluye el nombre del usuario
+          required: false,
         },
       ],
     });
@@ -201,8 +211,8 @@ const searchInventory = async (req, res) => {
     // Mapear los datos necesarios
     const mappedInventory = inventory.map((item) => ({
       id: item.id,
-      product: item.Product.name,
-      user: item.User.name,
+      product: item.Product ? item.Product.name : "Producto eliminado",
+      user: item.User ? item.User.name : "Usuario eliminado",
       details: item.details,
       date: item.createdAt,
       newState: item.newState,
