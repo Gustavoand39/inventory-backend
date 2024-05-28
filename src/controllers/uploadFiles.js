@@ -33,8 +33,8 @@ const uploadImage = async (req, res) => {
     // Generar un nombre de archivo único usando UUID
     const uniqueFileName = `${uuidv4()}-${fileName}`;
 
-    // Redimensionar la imagen a 200x200 y convertirla a JPEG
-    const image = await sharp(file.data).resize(200, 200).toBuffer();
+    // Redimensionar la imagen
+    const image = await sharp(file.data).resize(400, 400).toBuffer();
 
     // Guardar el buffer de la imagen en un archivo
     const filePath = path.join(folderPath, uniqueFileName);

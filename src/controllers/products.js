@@ -144,6 +144,8 @@ const updateProduct = async (req, res) => {
       message: "Producto actualizado exitosamente",
       data: product,
     });
+
+    // const authHeader = req.headers.authorization;
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -186,18 +188,37 @@ const deleteProduct = async (req, res) => {
 // Obtener los productos que están por debajo del stock mínimo
 const getProductsLowStock = async (req, res) => {
   try {
+    // Obtener los productos cuyo stock esté igual o menor que minStock
     const products = await Product.findAll({
       where: {
         stock: {
-          [Op.lt]: sequelize.col("min_stock"),
+          [Op.lte]: sequelize.col("min_stock"),
         },
       },
+      include: [
+        {
+          model: Category,
+          attributes: ["name"],
+          required: false,
+        }, // Left join con la tabla de categorías
+      ],
     });
+
+    // Mapear para devolver solo los campos necesarios
+    const mappedProducts = products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      stock: product.stock,
+      minStock: product.minStock,
+      image: product.image,
+      category: product.Category.name,
+    }));
 
     res.status(200).json({
       error: false,
       message: "Productos con stock bajo",
-      data: products,
+      data: mappedProducts,
     });
   } catch (error) {
     console.error(error);
