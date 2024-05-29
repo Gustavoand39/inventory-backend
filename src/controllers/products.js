@@ -117,7 +117,7 @@ const createProduct = async (req, res) => {
     await Inventory.create({
       productId: product.id,
       userId: decoded.userId,
-      details: `Producto creado`,
+      details: `Se ha creado un nuevo producto con ID: ${product.id}`,
       oldState: null,
       newState: newState,
     });
@@ -175,7 +175,7 @@ const updateProduct = async (req, res) => {
     await Inventory.create({
       productId: id,
       userId: decoded.userId,
-      details: `Producto editado`,
+      details: `Se actualizó el producto con ID: ${id}`,
       oldState: oldState,
       newState: newState,
     });
@@ -221,7 +221,7 @@ const deleteProduct = async (req, res) => {
     await Inventory.create({
       productId: null,
       userId: decoded.userId,
-      details: `Producto eliminado`,
+      details: `Se eliminó el producto con ID: ${id}`,
       oldState: null,
       newState: product,
     });
