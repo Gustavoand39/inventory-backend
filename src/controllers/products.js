@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const sequelize = require("../db/connection.js");
 const Product = require("../models/Product.js");
 const Category = require("../models/Category.js");
-const Inventory = require("../models/Inventory.js");
+const Inventory = require("../models/InventoryLog.js");
 
 const getListProducts = async (req, res) => {
   try {
@@ -105,6 +105,23 @@ const createProduct = async (req, res) => {
       categoryId: category,
     });
 
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
+
+    const newState = product.toJSON();
+
+    await Inventory.create({
+      productId: product.id,
+      userId: decoded.userId,
+      details: `Se ha creado un nuevo producto con ID: ${product.id}`,
+      oldState: null,
+      newState: newState,
+    });
+
     res.status(201).json({
       error: false,
       message: "Producto creado exitosamente",
@@ -158,7 +175,7 @@ const updateProduct = async (req, res) => {
     await Inventory.create({
       productId: id,
       userId: decoded.userId,
-      details: `Producto editado`,
+      details: `Se actualizó el producto con ID: ${id}`,
       oldState: oldState,
       newState: newState,
     });
@@ -193,6 +210,21 @@ const deleteProduct = async (req, res) => {
     if (product.image) fs.unlinkSync(`public/${product.image}`);
 
     await product.destroy();
+
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
+
+    await Inventory.create({
+      productId: null,
+      userId: decoded.userId,
+      details: `Se eliminó el producto con ID: ${id}`,
+      oldState: null,
+      newState: product,
+    });
 
     res.status(200).json({
       error: false,

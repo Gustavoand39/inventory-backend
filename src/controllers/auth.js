@@ -41,7 +41,7 @@ const login = async (req, res) => {
       error: false,
       message: "Inicio de sesión correcto",
       token,
-      user: {
+      data: {
         id: user.id,
         username: user.user_name,
       },
@@ -56,9 +56,10 @@ const login = async (req, res) => {
 };
 
 const refreshToken = async (req, res) => {
-  const { token } = req.body;
-
   try {
+    const bearer = req.headers.authorization;
+    const token = bearer.split(" ")[1];
+
     if (!token) {
       return res.status(401).json({
         error: true,
@@ -91,7 +92,7 @@ const refreshToken = async (req, res) => {
     res.json({
       error: false,
       message: "Token de refresco válido",
-      user: {
+      data: {
         id: user.id,
         username: user.user_name,
       },
