@@ -96,7 +96,7 @@ const createProduct = async (req, res) => {
   const { name, description, stock, minStock, image, category } = req.body;
 
   try {
-    await Product.create({
+    const product = await Product.create({
       name,
       description,
       stock,

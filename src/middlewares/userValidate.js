@@ -1,14 +1,7 @@
 const validator = require("validator");
 
 const validateUser = (req, res, next) => {
-  const { id } = req.params;
   const { name, last_name, user_name, email, password } = req.body;
-
-  if (id && (!isNaN(id) || !Number.isInteger(parseFloat(id)))) {
-    return res.status(400).json({
-      message: "Ingrese un id de usuario válido",
-    });
-  }
 
   if (!name || typeof name !== "string" || validator.isEmpty(name.trim())) {
     return res.status(400).json({
@@ -48,14 +41,16 @@ const validateUser = (req, res, next) => {
     });
   }
 
-  if (
-    !password ||
-    typeof password !== "string" ||
-    validator.isEmpty(password.trim())
-  ) {
-    return res.status(400).json({
-      message: "Ingrese una contraseña válida",
-    });
+  if (password) {
+    if (
+      !password ||
+      typeof password !== "string" ||
+      validator.isEmpty(password.trim())
+    ) {
+      return res.status(400).json({
+        message: "Ingrese una contraseña válida",
+      });
+    }
   }
 
   next();
