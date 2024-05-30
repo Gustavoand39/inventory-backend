@@ -56,10 +56,10 @@ const login = async (req, res) => {
 };
 
 const refreshToken = async (req, res) => {
-  const bearer = req.headers.authorization;
-  const token = bearer.split(" ")[1];
-
   try {
+    const bearer = req.headers.authorization;
+    const token = bearer.split(" ")[1];
+
     if (!token) {
       return res.status(401).json({
         error: true,
