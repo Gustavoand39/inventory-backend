@@ -14,36 +14,36 @@ const getListProducts = async (req, res) => {
 
     const offset = (page - 1) * limit;
 
-    const products = await sequelize.query(
-      `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
-      FROM Products p
-      LEFT JOIN Categories c
-      ON p.category_id = c.id
-      LIMIT :limit OFFSET :offset`,
-      {
-        replacements: { limit, offset },
-        type: sequelize.QueryTypes.SELECT,
-      }
-    );
+    const { count, rows: products } = await Product.findAndCountAll({
+      include: [
+        {
+          model: Category,
+          attributes: ["name"],
+          required: false,
+        }, // Left join con la tabla de categorías
+      ],
+      limit,
+      offset,
+    });
 
-    // Consulta para obtener el total de productos
-    const totalProducts = await sequelize.query(
-      `SELECT COUNT(*) as total FROM Products`,
-      {
-        type: sequelize.QueryTypes.SELECT,
-      }
-    );
-
-    const totalProd = totalProducts[0].total;
+    const mappedProducts = products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      stock: product.stock,
+      minStock: product.minStock,
+      image: product.image,
+      category: product.Category.name,
+    }));
 
     // Calcular el número total de páginas
-    const totalPages = Math.ceil(totalProd / limit);
+    const totalPages = Math.ceil(count / limit);
 
     res.status(200).json({
       error: false,
       message: "Productos obtenidos",
-      data: products,
-      totalItems: totalProd,
+      data: mappedProducts,
+      totalItems: count,
       totalPages,
     });
   } catch (error) {
@@ -59,17 +59,25 @@ const getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const product = await sequelize.query(
-      `SELECT p.id, p.name, p.description, p.stock, p.min_stock as minStock, p.image, c.name as category
-      FROM Products p
-      LEFT JOIN Categories c
-      ON p.category_id = c.id
-      WHERE p.id = :id`,
-      {
-        replacements: { id },
-        type: sequelize.QueryTypes.SELECT,
-      }
-    );
+    const product = await Product.findByPk(id, {
+      include: [
+        {
+          model: Category,
+          attributes: ["name"],
+          required: false,
+        }, // Left join con la tabla de categorías
+      ],
+    });
+
+    const mappedProduct = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      stock: product.stock,
+      minStock: product.minStock,
+      image: product.image,
+      category: product.Category.name,
+    };
 
     if (!product) {
       return res.status(404).json({
@@ -81,7 +89,7 @@ const getProductById = async (req, res) => {
     res.status(200).json({
       error: false,
       message: "Producto encontrado",
-      data: product[0],
+      data: mappedProduct,
     });
   } catch (error) {
     console.error(error);
