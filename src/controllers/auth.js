@@ -56,7 +56,8 @@ const login = async (req, res) => {
 };
 
 const refreshToken = async (req, res) => {
-  const { token } = req.body;
+  const bearer = req.headers.authorization;
+  const token = bearer.split(" ")[1];
 
   try {
     if (!token) {
