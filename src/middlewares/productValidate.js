@@ -12,7 +12,7 @@ const validateID = (req, res, next) => {
   next();
 };
 
-const newProductValidate = async (req, res, next) => {
+const productValidate = async (req, res, next) => {
   const { name, description, stock, minStock, image, category } = req.body;
 
   if (!name || typeof name !== "string" || validator.isEmpty(name.trim())) {
@@ -60,5 +60,5 @@ const newProductValidate = async (req, res, next) => {
 
 module.exports = {
   validateID,
-  newProductValidate,
+  productValidate,
 };

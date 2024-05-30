@@ -12,7 +12,7 @@ const {
 const validateToken = require("../middlewares/validateToken.js");
 const {
   validateID,
-  newProductValidate,
+  productValidate,
 } = require("../middlewares/productValidate.js");
 
 const router = Router();
@@ -32,12 +32,12 @@ router.get("/:id", [validateToken, validateID], getProductById);
 router.get("/", [validateToken], getListProducts);
 
 // Crear un producto
-router.post("/", [validateToken, newProductValidate], createProduct);
+router.post("/", [validateToken, productValidate], createProduct);
 
 // Actualizar un producto
-router.put("/:id", [validateToken], updateProduct);
+router.put("/:id", [validateToken, productValidate], updateProduct);
 
 // Eliminar un producto
-router.delete("/:id", [validateToken], deleteProduct);
+router.delete("/:id", [validateToken, validateID], deleteProduct);
 
 module.exports = router;
