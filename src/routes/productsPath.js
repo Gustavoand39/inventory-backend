@@ -10,10 +10,8 @@ const {
   searchProduct,
 } = require("../controllers/products.js");
 const validateToken = require("../middlewares/validateToken.js");
-const {
-  validateID,
-  productValidate,
-} = require("../middlewares/productValidate.js");
+const { productValidate } = require("../middlewares/productValidate.js");
+const { validateID } = require("../middlewares/validateID.js");
 
 const router = Router();
 
